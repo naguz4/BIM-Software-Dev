@@ -52,7 +52,7 @@
                 </div>
               </div>
               <div>
-                <button type="button">Cancel</button>
+                <button id="CancelButton" type="button">Cancel</button>
                 <button type="submit">Accept</button>
               </div>
             </form>
@@ -60,6 +60,8 @@
           <header>
             <h2>Projects</h2>
             <div>
+              <span id="import-project-btn" class="material-icons-round action-icon">file_upload</span>
+              <span id="export-project-btn" class="material-icons-round action-icon">file_download</span>
               <button id="new-project-btn">New Project</button>
             </div>
           </header>
@@ -202,6 +204,8 @@
                 <div id="viewer-container" class="dashboard-card"></div>
             </div>
         </div>
+      
+      
       <div id="users-page" style="margin: 30px;display: none;">
         <div style="display: flex; justify-content: space-between;margin-bottom: 60px;">
           <div>
@@ -273,6 +277,10 @@
         </div>
         
       </div>
+      <dialog id="error-modal" style="border-radius:10px rgb(255, 255, 255); background-color: var(--background-100); padding: 50px;">
+        <div id="errorText" style="color: aliceblue;"></div>
+        <button class="close" id="close">X</button>
+      </dialog>
       </main>
 
       <script type="module" src="./src/index.ts"></script>
