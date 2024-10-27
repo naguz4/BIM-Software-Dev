@@ -14,6 +14,7 @@ function toggleModal(id: string) {
     }
 }
 
+
 const projectsListUI = document.getElementById("projects-list") as HTMLElement
 const projectsManager = new ProjectsManager(projectsListUI)
 
@@ -28,8 +29,12 @@ if (newProjectBtn) {
 
 }
 
+
 const projectForm = document.getElementById("new-project-form") as HTMLFormElement | null;
 const cancelButton = document.getElementById("CancelButton");
+const errorwindow = document.getElementById("error-modal");
+const closebutton = document.getElementById("close");
+const errorText = document.getElementById("errorText")
 if (projectForm && projectForm instanceof HTMLFormElement) {
     projectForm.addEventListener("submit", (e) => {
         e.preventDefault()
@@ -47,14 +52,22 @@ if (projectForm && projectForm instanceof HTMLFormElement) {
             projectForm.reset()
             toggleModal("new-project-modal")
         } catch (err) {
-            alert(err)
-        }
-        
+            toggleModal("error-modal")
+            const errormessage = err;
+            errorText?.append(errormessage);   
+        }      
 })  
 } else {
     console.warn("The project form was not found. Check the ID!")
 }
 
+if (closebutton) {
+    closebutton.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleModal("error-modal");
+    })
+    
+}
 
 if (cancelButton) {
     cancelButton.addEventListener("click", (e) => {
@@ -66,4 +79,18 @@ if (cancelButton) {
     });
 } else {
     console.warn("The cancel button was not found. Check the ID!");
+}
+
+const exportProjectBtn=document.getElementById("export-project-btn")
+if (exportProjectBtn) {
+    exportProjectBtn.addEventListener("click", () => {
+        projectsManager.exportToJSON()
+    })
+}
+
+const importProjectsBtn = document.getElementById("import-project-btn")
+if (importProjectsBtn) {
+    importProjectsBtn.addEventListener("click", () => {
+        projectsManager.importFromJSON()
+    })
 }

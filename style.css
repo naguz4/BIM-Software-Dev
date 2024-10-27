@@ -248,3 +248,15 @@ label {
 .todo-item:hover {
     background-color: var(--primary);
 }
+
+.close {
+	background: #606061;
+	color: #FFFFFF;
+	line-height: 15px;
+	position: absolute;
+	right: 3px;
+	text-align: center;
+	top: 3px;
+	text-decoration: none;
+	font-weight: bold;
+}
