@@ -29,6 +29,18 @@ if (newProjectBtn) {
 
 }
 
+const ProjectsBtn = document.getElementById("ProjectsBtn")
+if (ProjectsBtn) {
+    ProjectsBtn.addEventListener("click", () => {
+        const projectsPage = document.getElementById("projects-page")
+        const detailsPage = document.getElementById("project-details")
+        if(!(projectsPage && detailsPage)) { return }
+        projectsPage.style.display = "flex"
+        detailsPage.style.display = "none"    
+        
+    })
+}
+
 
 const projectForm = document.getElementById("new-project-form") as HTMLFormElement | null;
 const cancelButton = document.getElementById("CancelButton");
