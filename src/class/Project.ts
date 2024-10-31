@@ -30,7 +30,7 @@ export class Project implements IProject {
       for (const key in data) {
         this[key] = data[key]
       }
-        this.id = uuidv4()
+        if (!this.id)  {this.id = uuidv4()}
         this.setUI()
         
     }
