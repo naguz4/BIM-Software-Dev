@@ -19,7 +19,7 @@ export class Project implements IProject {
     userRole: "architect" | "engineer" | "developer"
     finishDate: Date
 
-    //Class internals Added comment////
+    //Class internals Added comment///////------
 
     ui: HTMLDivElement
     cost: number = 0

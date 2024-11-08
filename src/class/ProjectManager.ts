@@ -35,7 +35,8 @@ export class ProjectsManager {
             const detailsPage = document.getElementById("project-details")
             if(!(projectsPage && detailsPage)) { return }
             projectsPage.style.display = "none"
-            detailsPage.style.display = "flex"    
+            detailsPage.style.display = "flex" 
+            this.setDetailsPage(project)   
         })
         
 
@@ -43,6 +44,13 @@ export class ProjectsManager {
         this.ui.append(project.ui)
         this.list.push(project)
         return project
+    }
+
+    private setDetailsPage(project: Project) {
+        const detailPage = document.getElementById("project-details")
+        if(!detailPage) { return }
+        const name = detailPage.querySelector("[data-project-info='name'")
+        if (name) { name.textContent = project.name }
     }
 
     getProject(id: string) {
