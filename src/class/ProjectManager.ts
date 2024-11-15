@@ -10,7 +10,7 @@ export class ProjectsManager {
         description: "Default Project Description",
         userRole: "architect",
         status: "active",
-        finishDate: new Date("2024,04,09")
+        finishDate: new Date("2024,04,09"),
     }
 
 
@@ -36,7 +36,8 @@ export class ProjectsManager {
             if(!(projectsPage && detailsPage)) { return }
             projectsPage.style.display = "none"
             detailsPage.style.display = "flex" 
-            this.setDetailsPage(project)   
+            this.setDetailsPage(project) 
+            this.setdashboard(project)  
         })
         
 
@@ -51,6 +52,28 @@ export class ProjectsManager {
         if(!detailPage) { return }
         const name = detailPage.querySelector("[data-project-info='name'")
         if (name) { name.textContent = project.name }
+        const description = detailPage.querySelector("[data-project-info='Description'")
+        if (description) { description.textContent = project.description }
+        
+        
+    }
+
+    private setdashboard(project: Project) {
+        const dashboardcard = document.getElementById("dashboard-card");
+        if(!dashboardcard) { return }
+        const name = dashboardcard.querySelector("[data-project-info='name']");
+        if (name) { name.textContent = project.name }
+        const description = dashboardcard.querySelector("[data-project-info='Description']");
+        if (description) { description.textContent = project.description }
+        const userRole = dashboardcard.querySelector("[data-project-info='userRole']");
+        if (userRole) { userRole.textContent = project.userRole }
+        const status = dashboardcard.querySelector("[data-project-info='status']");
+        if (status) { status.textContent = project.status }
+        const finishDate = dashboardcard.querySelector("[data-project-info='dateFinished']");
+        if (finishDate) { 
+            const formattedDate = new Date(project.finishDate).toLocaleDateString("en-GB");
+            finishDate.textContent = formattedDate
+         }
     }
 
     getProject(id: string) {

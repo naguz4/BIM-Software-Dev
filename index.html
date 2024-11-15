@@ -48,7 +48,7 @@
                 </div>
                 <div class="form-field-container">
                   <label><span class="material-symbols-outlined">calendar_month</span>Finish Date</label>
-                  <input name="finisDate" type="date"><input>
+                  <input name="finishDate" type="date"><input>
                 </div>
               </div>
               <div>
@@ -134,12 +134,12 @@
             <header>
                 <div>
                     <h2 data-project-info="name">Hospital Center</h2>
-                    <p style="color: antiquewhite;">Community hospital location</p>
+                    <p data-project-info="Description" style="color: antiquewhite;">Community hospital location</p>
                 </div>
             </header>
             <div class="main-page-content">
                 <div style="display: flex; flex-direction: column;row-gap: 5px;">
-                    <div class="dashboard-card" style="padding: 30px; gap: 20px;">
+                    <div class="dashboard-card" style="padding: 30px; gap: 20px;" id="dashboard-card">
                         <div style="display: flex; justify-content: space-between;">
                             <p style="font-size: 23px; background-color:rgb(218, 169, 78); border-radius: 50%; width: 50px; height: 50px; text-align: center; display: inline-block; display: flex;
                             align-items: center;justify-content: center;">HC</p>
@@ -147,13 +147,13 @@
                         </div>
                         <div style="padding: 0 30px;">
                             <div>
-                                <h5 style="padding: 10px;">Hospital Center</h5>
-                                <p style="padding: 10px;">Community hospital located downtown</p>
+                                <h5 data-project-info="name" style="padding: 10px;">Hospital Center</h5>
+                                <p data-project-info="Description" style="padding: 10px;">Community hospital located downtown</p>
                             </div>
                             <div style="display: flex; column-gap: 30px; padding: 5px;">
                                 <div>
-                                    <p style="color: rgb(107, 105, 101); font-size: var(form-field-container);">Status</p>
-                                    <p>Active</p>
+                                    <p  style="color: rgb(107, 105, 101); font-size: var(form-field-container);">Status</p>
+                                    <p data-project-info="status">Active</p>
                                 </div>
                                 <div>
                                     <p style="color: rgb(107, 105, 101); font-size: var(form-field-container);">Value</p>
@@ -161,11 +161,11 @@
                                 </div>
                                 <div>
                                     <p style="color:rgb(107, 105, 101); font-size: var(form-field-container);">Role</p>
-                                    <p>Engineer</p>
+                                    <p data-project-info="userRole">Engineer</p>
                                 </div>
                                 <div>
                                     <p style="color: rgb(107, 105, 101); font-size: var(form-field-container);">Date</p>
-                                    <p>2023/05/01</p>
+                                    <p data-project-info="dateFinished">2023/05/01</p>
                                 </div>
 
                             </div>
