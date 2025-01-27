@@ -260,3 +260,7 @@ label {
 	text-decoration: none;
 	font-weight: bold;
 }
+
+.initials {
+    text-transform: uppercase;
+}

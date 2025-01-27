@@ -43,7 +43,7 @@ export class Project implements IProject {
         this.ui.className = "project-card"
         this.ui.innerHTML = `
         <div class="card-header">
-                <p style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;">${this.firstletters}</p>
+                <p class="initials" style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1">${this.firstletters}</p>
                 <div>
                   <h5>${this.name}</h5>
                   <p>${this.description}</p>

@@ -47,6 +47,18 @@ const cancelButton = document.getElementById("CancelButton");
 const errorwindow = document.getElementById("error-modal");
 const closebutton = document.getElementById("close");
 const errorText = document.getElementById("errorText")
+
+const getInitials = (name: string): string => {
+    const parts = name.split(" ");
+    let initials = "";
+    for (const part of parts) {
+        if (part.length > 0) {
+            initials += part[0];
+        }
+    }
+    return initials;
+};
+
 if (projectForm && projectForm instanceof HTMLFormElement) {
     projectForm.addEventListener("submit", (e) => {
         e.preventDefault()
@@ -57,7 +69,7 @@ if (projectForm && projectForm instanceof HTMLFormElement) {
             status: formData.get("status") as ProjecStatus,
             userRole: formData.get("userRole") as UserRole,
             finishDate: new Date(formData.get("finishDate") as string),
-            firstletters: formData.get("name") as string,
+            firstletters: getInitials(formData.get("name") as string),
         }
 
         try{
