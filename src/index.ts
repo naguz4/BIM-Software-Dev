@@ -56,7 +56,8 @@ if (projectForm && projectForm instanceof HTMLFormElement) {
             description: formData.get("description") as string,
             status: formData.get("status") as ProjecStatus,
             userRole: formData.get("userRole") as UserRole,
-            finishDate: new Date(formData.get("finishDate") as string)
+            finishDate: new Date(formData.get("finishDate") as string),
+            firstletters: formData.get("name") as string,
         }
 
         try{

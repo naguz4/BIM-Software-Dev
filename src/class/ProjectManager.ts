@@ -11,6 +11,7 @@ export class ProjectsManager {
         userRole: "architect",
         status: "active",
         finishDate: new Date("2024,04,09"),
+        firstletters: "HC",
     }
 
 
@@ -74,6 +75,22 @@ export class ProjectsManager {
             const formattedDate = new Date(project.finishDate).toLocaleDateString("en-GB");
             finishDate.textContent = formattedDate
          }
+        const firstletters = dashboardcard.querySelector("[data-project-info='initials']");
+        if (firstletters) {
+            var getname = project.name
+            var getInitials = function (getname) {
+                var parts = getname.split(' ')
+                var initials = ''
+                for (var i = 0; i < parts.length; i++) {
+                  if (parts[i].length > 0 && parts[i] !== '') {
+                    initials += parts[i][0]
+                  }
+                }
+                return initials
+              }
+              firstletters.textContent = getInitials(getname)  
+        }
+        
     }
 
     getProject(id: string) {

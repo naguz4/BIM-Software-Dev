@@ -9,6 +9,7 @@ export interface IProject {
     status: ProjecStatus
     userRole: UserRole
     finishDate: Date
+    firstletters: string
 }
 
 export class Project implements IProject {
@@ -18,6 +19,7 @@ export class Project implements IProject {
     status: "pending" | "active" | "finished"
     userRole: "architect" | "engineer" | "developer"
     finishDate: Date
+    firstletters: string
 
     //Class internals Added comment///////------
 
@@ -41,7 +43,7 @@ export class Project implements IProject {
         this.ui.className = "project-card"
         this.ui.innerHTML = `
         <div class="card-header">
-                <p style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;">HC</p>
+                <p style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;">${this.firstletters}</p>
                 <div>
                   <h5>${this.name}</h5>
                   <p>${this.description}</p>
