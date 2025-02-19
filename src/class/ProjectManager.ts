@@ -1,5 +1,3 @@
-
-
 import { IProject, Project} from "./Project"
 
 export class ProjectsManager {
@@ -30,6 +28,9 @@ export class ProjectsManager {
         if(nameInUse) {
             throw new Error (`A project with the name "${data.name}" already exists` )
         }
+        if (!data.finishDate) {
+            data.finishDate = new Date("2025-02-17"); // Set default finish date if empty
+        }
         const project = new Project(data)
         project.ui.addEventListener("click", () => {
             const projectsPage = document.getElementById("projects-page")
@@ -40,9 +41,6 @@ export class ProjectsManager {
             this.setDetailsPage(project) 
             this.setdashboard(project)  
         })
-        
-
-     
         this.ui.append(project.ui)
         this.list.push(project)
         return project
@@ -70,11 +68,12 @@ export class ProjectsManager {
         if (userRole) { userRole.textContent = project.userRole }
         const status = dashboardcard.querySelector("[data-project-info='status']");
         if (status) { status.textContent = project.status }
-        const finishDate = dashboardcard.querySelector("[data-project-info='dateFinished']");
+        const finishDate = dashboardcard.querySelector("[data-project-info='finishDate']");
         if (finishDate) { 
-            const formattedDate = new Date(project.finishDate).toLocaleDateString("en-GB");
+            const date = project.finishDate ? new Date(project.finishDate) : new Date("2025-02-17"); // Set default finish date if empty
+            const formattedDate = date.toLocaleDateString("en-GB", { year: 'numeric', month: '2-digit', day: '2-digit' });
             finishDate.textContent = formattedDate
-         }
+        }
         const firstletters = dashboardcard.querySelector("[data-project-info='initials']");
         if (firstletters) {
             var getname = project.name
