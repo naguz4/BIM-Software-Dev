@@ -18,13 +18,14 @@
     <main id="content">
         <div class="page" id="projects-page" style="display: flex;">
           <dialog id="new-project-modal">
-            <form id="new-project-form">
+            <form id="new-project-form" onsubmit="return validateForm()" >
               <h2>New Project</h2>
               <div class="input-list">
                 <div class="form-field-container">
                   <label><span class="material-symbols-outlined">apartment</span>Name</label>
-                  <input name="name" type="text">
+                  <input name="name" type="text" id="project-name">
                   <div class="hint">Hint: use capitals</div>
+                  <div id="error-message" style="color: red; display: none;">Project name must be at least 5 characters long.</div>
                 </div>
                 <div class="form-field-container">
                   <label><span class="material-symbols-outlined">description</span>Description</label>
@@ -68,7 +69,7 @@
           <div id="projects-list">
             <div class="project-card">
               <div class="card-header">
-                <p style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;">HC</p>
+                <p  style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;text-transform: uppercase;">HC</p>
                 <div>
                   <h5>Project Name</h5>
                   <p>Project Description</p>
@@ -99,7 +100,7 @@
             </div>
             <div class="project-card">
               <div class="card-header">
-                <p style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;">HC</p>
+                <p class="initials" style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;text-transform: uppercase;">HC</p>
                 <div>
                   <h5>Project Name</h5>
                   <p>Project Description</p>
@@ -141,7 +142,7 @@
                 <div style="display: flex; flex-direction: column;row-gap: 5px;">
                     <div class="dashboard-card" style="padding: 30px; gap: 20px;" id="dashboard-card">
                         <div style="display: flex; justify-content: space-between;">
-                            <p style="font-size: 23px; background-color:rgb(218, 169, 78); border-radius: 50%; width: 50px; height: 50px; text-align: center; display: inline-block; display: flex;
+                            <p class="initials" data-project-info="initials" style="font-size: 23px; background-color:rgb(218, 169, 78); border-radius: 50%; width: 50px; height: 50px; text-align: center; display: inline-block; display: flex;
                             align-items: center;justify-content: center;">HC</p>
                             <button class="btn-secondary"><p style="width: 20px;">Edit</p></button>
                         </div>
@@ -165,9 +166,8 @@
                                 </div>
                                 <div>
                                     <p style="color: rgb(107, 105, 101); font-size: var(form-field-container);">Date</p>
-                                    <p data-project-info="dateFinished">2023/05/01</p>
+                                    <p data-project-info="finishDate"></p>
                                 </div>
-
                             </div>
                             <div style="background-color: #404040; border-radius: 20px;">
                                 <div style="width: 80%; background-color: green;border-radius: 20px;"><p style="text-align: center;">80%</p></div>
@@ -202,6 +202,45 @@
 
                 </div>
                 <div id="viewer-container" class="dashboard-card"></div>
+                <dialog id="edit-project-modal">
+                    <form id="edit-project-form">
+                        <h2>Edit Project</h2>
+                        <div class="input-list">
+                            <div class="form-field-container">
+                                <label><span class="material-symbols-outlined">apartment</span>Name</label>
+                                <input name="name" type="text" id="edit-project-name">
+                            </div>
+                            <div class="form-field-container">
+                                <label><span class="material-symbols-outlined">description</span>Description</label>
+                                <textarea name="description" cols="30" rows="5" id="edit-project-description"></textarea>
+                            </div>
+                            <div class="form-field-container">
+                                <label><span class="material-symbols-outlined">account_circle</span>Role</label>
+                                <select name="userRole" id="edit-project-role">
+                                    <option>Architect</option>
+                                    <option>Engineer</option>
+                                    <option>Developer</option>
+                                </select>
+                            </div>
+                            <div class="form-field-container">
+                                <label><span class="material-symbols-outlined">location_on</span>Status</label>
+                                <select name="status" id="edit-project-status">
+                                    <option>Pending</option>
+                                    <option>Active</option>
+                                    <option>Finished</option>
+                                </select>
+                            </div>
+                            <div class="form-field-container">
+                                <label><span class="material-symbols-outlined">calendar_month</span>Finish Date</label>
+                                <input name="finishDate" type="date" id="edit-project-finishDate">
+                            </div>
+                        </div>
+                        <div>
+                            <button id="edit-cancel-button" type="button">Cancel</button>
+                            <button type="submit">Save</button>
+                        </div>
+                    </form>
+                </dialog>
             </div>
         </div>
       

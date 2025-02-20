@@ -260,3 +260,39 @@ label {
 	text-decoration: none;
 	font-weight: bold;
 }
+
+.initials {
+    padding: 10px;
+    border-radius: 8px;
+    aspect-ratio: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* Ensure text is visible on any background */
+    text-transform: uppercase;
+}
+
+.color-1 {
+    background-color: #FF5733; /* Vibrant Orange */
+}
+
+.color-2 {
+    background-color: #33FF57; /* Vibrant Green */
+}
+
+.color-3 {
+    background-color: #3357FF; /* Vibrant Blue */
+}
+
+.color-4 {
+    background-color: #FF33A8; /* Vibrant Pink */
+}
+
+.color-5 {
+    background-color: #FFC733; /* Vibrant Yellow */
+}
+
+.color-6 {
+    background-color: #8A33FF; /* Vibrant Purple */
+}
+

@@ -9,6 +9,8 @@ export interface IProject {
     status: ProjecStatus
     userRole: UserRole
     finishDate: Date
+    firstletters: string
+
 }
 
 export class Project implements IProject {
@@ -18,8 +20,10 @@ export class Project implements IProject {
     status: "pending" | "active" | "finished"
     userRole: "architect" | "engineer" | "developer"
     finishDate: Date
+    firstletters: string
+    color: string
 
-    //Class internals Added comment///////------
+    //Class internals Added comment///////
 
     ui: HTMLDivElement
     cost: number = 0
@@ -27,21 +31,29 @@ export class Project implements IProject {
     id: string
 
     constructor(data: IProject) {
-      for (const key in data) {
-        this[key] = data[key]
-      }
+        for (const key in data) {
+            if (key === 'finishDate' && typeof data[key] === 'string') {
+                this[key] = new Date(data[key]);
+            } else {
+                this[key] = data[key];
+            }
+        }
         if (!this.id)  {this.id = uuidv4()}
         this.setUI()
-        
     }
 
     setUI() {
+
+      const colorClasses = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5', 'color-6'];
+
+      const randomColorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
+
       if (this.ui) {return}
           this.ui = document.createElement("div")
         this.ui.className = "project-card"
         this.ui.innerHTML = `
         <div class="card-header">
-                <p style="background-color: orange; padding: 10px; border-radius: 8px; aspect-ratio: 1;">HC</p>
+                <p class="initials ${randomColorClass}">${this.firstletters}</p>
                 <div>
                   <h5>${this.name}</h5>
                   <p>${this.description}</p>
@@ -71,4 +83,8 @@ export class Project implements IProject {
               </div>
             </div>`
         }
+        
 }
+
+
+
