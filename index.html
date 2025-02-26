@@ -183,7 +183,7 @@
                                 <span class="material-symbols-outlined">search</span>
                                 <input type="text" placeholder="Search To-Do">
                             </div>
-                            <span class="material-symbols-outlined">add</span>
+                            <button class="material-symbols-outlined add">add</button>
                         </div>
                         <div style="display: flex; flex-direction: column;margin: 20px;">
                             <div class="todo-item">
@@ -198,8 +198,26 @@
                                 </div>
                             </div>
                         </div>
+                        <dialog id="new-todo-modal">
+                            <form id="new-todo-form">
+                                <h2>New To-Do Item</h2>
+                                <div class="input-list">
+                                    <div class="form-field-container">
+                                        <label><span class="material-symbols-outlined">description</span>Description</label>
+                                        <textarea name="description" cols="30" rows="5" id="todo-description"></textarea>
+                                    </div>
+                                    <div class="form-field-container">
+                                        <label><span class="material-symbols-outlined">calendar_month</span>Due Date</label>
+                                        <input name="dueDate" type="date" id="todo-dueDate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id="todo-cancel-button" type="button">Cancel</button>
+                                    <button type="submit">Save</button>
+                                </div>
+                            </form>
+                        </dialog>
                     </div>
-
                 </div>
                 <div id="viewer-container" class="dashboard-card"></div>
                 <dialog id="edit-project-modal">

@@ -209,4 +209,49 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.warn("Edit project elements were not found. Check the IDs!");
     }
+
+    const addTodoBtn = document.querySelector(".material-symbols-outlined.add");
+    const newTodoModal = document.getElementById("new-todo-modal") as HTMLDialogElement;
+    const newTodoForm = document.getElementById("new-todo-form") as HTMLFormElement;
+
+    if (addTodoBtn && newTodoModal && newTodoForm) {
+        addTodoBtn.addEventListener("click", () => {
+            newTodoModal.showModal();
+        });
+
+        newTodoForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            // Get the new to-do item details
+            const description = (newTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value;
+            const dueDate = (newTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value;
+
+            // Create a new to-do item element
+            const todoItem = document.createElement("div");
+            todoItem.className = "todo-item";
+            todoItem.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="display: flex; column-gap: 30px; align-items: center;">
+                        <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
+                        <p style="width:250px;">${description}</p>
+                    </div>
+                    <p>${dueDate}</p>
+                </div>
+            `;
+
+            // Append the new to-do item to the to-do list
+            const todoList = (document.querySelector(".dashboard-card .todo-item") as HTMLElement).parentElement;
+            if (todoList) {
+                todoList.appendChild(todoItem);
+            }
+
+            // Reset the form and close the modal
+            newTodoForm.reset();
+            newTodoModal.close();
+        });
+
+        (document.getElementById("todo-cancel-button")as HTMLElement).addEventListener("click", () => {
+            newTodoModal.close();
+        });
+    }
 });
