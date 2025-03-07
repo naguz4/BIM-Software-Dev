@@ -1,4 +1,4 @@
-import { IProject, UserRole, ProjecStatus } from "./class/Project";
+import { IProject, UserRole, ProjecStatus, ITodo, Project } from "./class/Project";
 import { ProjectsManager } from "./class/ProjectManager";
 
 function toggleModal(id: string) {
@@ -16,6 +16,8 @@ function toggleModal(id: string) {
 
 const projectsListUI = document.getElementById("projects-list") as HTMLElement;
 const projectsManager = new ProjectsManager(projectsListUI);
+
+let currentProject: Project | null = null;
 
 const newProjectBtn = document.getElementById("new-project-btn");
 if (newProjectBtn) {
@@ -86,10 +88,12 @@ if (projectForm && projectForm instanceof HTMLFormElement) {
             userRole: formData.get("userRole") as UserRole,
             finishDate: new Date(formData.get("finishDate") as string),
             firstletters: getInitials(formData.get("name") as string),
+            todos: [], // Initialize todos
         };
 
         try {
             const project = projectsManager.newProject(projectData);
+            currentProject = project; // Set the current project
             projectForm.reset();
             toggleModal("new-project-modal");
         } catch (err) {
@@ -233,16 +237,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div style="display: flex; justify-content: space-between;">
                     <div style="display: flex; column-gap: 30px; align-items: center;">
                         <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
-                        <p style="width:250px;">${description}</p>
+                        <p style="width:250px;" data-todo='descriptiontodo'>${description}</p>
                     </div>
-                    <p>${dueDate}</p>
+                    <p data-todo='datetodo'>${dueDate}</p>
                 </div>
             `;
 
             // Append the new to-do item to the to-do list
-            const todoList = (document.querySelector(".dashboard-card .todo-item") as HTMLElement).parentElement;
+            const todoList = document.querySelector(".dashboard-card .todo-item")?.parentElement;
             if (todoList) {
                 todoList.appendChild(todoItem);
+            }
+
+            // Add the new to-do item to the current project's todos array
+            if (currentProject) {
+                currentProject.todos.push({ description, dueDate });
             }
 
             // Reset the form and close the modal
@@ -250,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
             newTodoModal.close();
         });
 
-        (document.getElementById("todo-cancel-button")as HTMLElement).addEventListener("click", () => {
+        (document.getElementById("todo-cancel-button") as HTMLElement).addEventListener("click", () => {
             newTodoModal.close();
         });
     }
