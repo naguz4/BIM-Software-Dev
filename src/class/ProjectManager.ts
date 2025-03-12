@@ -170,11 +170,19 @@ export class ProjectsManager {
                 return;
             }
             const projects: IProject[] = JSON.parse(json as string);
-            for (const project of projects) {
-                try {
-                    this.newProject(project);
-                } catch (error) {
-                    console.error(error);
+            for (const projectData of projects) {
+                const existingProject = this.getProjectByName(projectData.name);
+                if (existingProject) {
+                    // Update existing project details
+                    existingProject.description = projectData.description;
+                    existingProject.status = projectData.status;
+                    existingProject.userRole = projectData.userRole;
+                    existingProject.finishDate = new Date(projectData.finishDate);
+                    existingProject.firstletters = projectData.firstletters;
+                    existingProject.todos = Array.from(projectData.todos); // Ensure todos is a new array instance
+                } else {
+                    // Create a new project
+                    this.newProject(projectData);
                 }
             }
         });
