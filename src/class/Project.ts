@@ -60,8 +60,8 @@ export class Project implements IProject {
         <div class="card-header">
             <p class="initials ${randomColorClass}">${this.firstletters}</p>
             <div>
-                <h5>${this.name}</h5>
-                <p>${this.description}</p>
+                <h5 data-project-info="name">${this.name}</h5>
+                <p data-project-info="Description">${this.description}</p>
             </div>
         </div>
         <div class="card-content">

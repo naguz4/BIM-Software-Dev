@@ -46,6 +46,7 @@ export class ProjectsManager {
             detailsPage.style.display = "flex";
             this.setDetailsPage(project);
             this.setdashboard(project);
+            this.currentProject = project; // Set the current project
         });
         this.ui.append(project.ui);
         this.list.push(project);
@@ -68,7 +69,7 @@ export class ProjectsManager {
         this.currentProject = project; // Set the current project
     }
 
-    private setdashboard(project: Project) {
+    setdashboard(project: Project) {
         const dashboardcard = document.getElementById("dashboard-card");
         if (!dashboardcard) {
             return;
@@ -180,6 +181,7 @@ export class ProjectsManager {
                     existingProject.finishDate = new Date(projectData.finishDate);
                     existingProject.firstletters = projectData.firstletters;
                     existingProject.todos = Array.from(projectData.todos); // Ensure todos is a new array instance
+                    this.setdashboard(existingProject); // Update the dashboard card
                 } else {
                     // Create a new project
                     this.newProject(projectData);

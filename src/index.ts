@@ -148,15 +148,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editProjectBtn && editProjectModal && editProjectForm) {
         editProjectBtn.addEventListener("click", () => {
             // Populate the form with current project details
-            const projectNameElement = document.querySelector("[data-project-info='name']");
+            const projectNameElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='name']");
             const projectName = projectNameElement ? projectNameElement.textContent as string : "";
-            const projectDescriptionElement = document.querySelector("[data-project-info='Description']");
+            const projectDescriptionElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='Description']");
             const projectDescription = projectDescriptionElement ? projectDescriptionElement.textContent as string : "";
-            const projectRoleElement = document.querySelector("[data-project-info='userRole']");
+            const projectRoleElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='userRole']");
             const projectRole = projectRoleElement ? projectRoleElement.textContent as string : "";
-            const projectStatusElement = document.querySelector("[data-project-info='status']");
+            const projectStatusElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='status']");
             const projectStatus = projectStatusElement ? projectStatusElement.textContent as string : "";
-            const projectFinishDateElement = document.querySelector("[data-project-info='finishDate']");
+            const projectFinishDateElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='finishDate']");
             const projectFinishDate = projectFinishDateElement ? projectFinishDateElement.textContent as string : "";
 
             (editProjectForm.elements.namedItem("name") as HTMLInputElement).value = projectName;
@@ -178,25 +178,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const updatedStatus = (editProjectForm.elements.namedItem("status") as HTMLSelectElement).value;
             const updatedFinishDate = (editProjectForm.elements.namedItem("finishDate") as HTMLInputElement).value;
 
-            const nameElement = document.querySelector("[data-project-info='name']");
-            if (nameElement) {
-                nameElement.textContent = updatedName;
-            }
-            const descriptionElement = document.querySelector("[data-project-info='Description']");
-            if (descriptionElement) {
-                descriptionElement.textContent = updatedDescription;
-            }
-            const userRoleElement = document.querySelector("[data-project-info='userRole']");
-            if (userRoleElement) {
-                userRoleElement.textContent = updatedRole;
-            }
-            const statusElement = document.querySelector("[data-project-info='status']");
-            if (statusElement) {
-                statusElement.textContent = updatedStatus;
-            }
-            const finishDateElement = document.querySelector("[data-project-info='finishDate']");
-            if (finishDateElement) {
-                finishDateElement.textContent = updatedFinishDate;
+            if (currentProject) {
+                currentProject.name = updatedName;
+                currentProject.description = updatedDescription;
+                currentProject.userRole = updatedRole as UserRole;
+                currentProject.status = updatedStatus as ProjecStatus;
+                currentProject.finishDate = new Date(updatedFinishDate);
+                currentProject.firstletters = getInitials(updatedName);
+
+                // Update the dashboard card
+                projectsManager.setdashboard(currentProject);
+
+                // Update the project card
+                const projectCard = currentProject.ui;
+                const projectCardName = projectCard.querySelector("[data-project-info='name']");
+                const projectCardDescription = projectCard.querySelector("[data-project-info='Description']");
+                if (projectCardName) {
+                    projectCardName.textContent = updatedName;
+                }
+                if (projectCardDescription) {
+                    projectCardDescription.textContent = updatedDescription;
+                }
             }
 
             editProjectModal.close();
