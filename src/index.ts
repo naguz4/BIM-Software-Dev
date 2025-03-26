@@ -81,12 +81,15 @@ if (projectForm && projectForm instanceof HTMLFormElement) {
         }
 
         const formData = new FormData(projectForm);
+        const finishDateValue = formData.get("finishDate") as string;
+        const finishDate = finishDateValue ? new Date(finishDateValue) : new Date(); // Set default date to current date if not provided
+
         const projectData: IProject = {
             name: formData.get("name") as string,
             description: formData.get("description") as string,
             status: formData.get("status") as ProjecStatus,
             userRole: formData.get("userRole") as UserRole,
-            finishDate: new Date(formData.get("finishDate") as string),
+            finishDate: finishDate,
             firstletters: getInitials(formData.get("name") as string),
             todos: [], // Initialize todos
         };
@@ -147,25 +150,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (editProjectBtn && editProjectModal && editProjectForm) {
         editProjectBtn.addEventListener("click", () => {
-            // Populate the form with current project details
-            const projectNameElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='name']");
-            const projectName = projectNameElement ? projectNameElement.textContent as string : "";
-            const projectDescriptionElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='Description']");
-            const projectDescription = projectDescriptionElement ? projectDescriptionElement.textContent as string : "";
-            const projectRoleElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='userRole']");
-            const projectRole = projectRoleElement ? projectRoleElement.textContent as string : "";
-            const projectStatusElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='status']");
-            const projectStatus = projectStatusElement ? projectStatusElement.textContent as string : "";
-            const projectFinishDateElement = document.getElementById("dashboard-card")?.querySelector("[data-project-info='finishDate']");
-            const projectFinishDate = projectFinishDateElement ? projectFinishDateElement.textContent as string : "";
+            if (currentProject) {
+                // Populate the form with current project details
+                (editProjectForm.elements.namedItem("name") as HTMLInputElement).value = currentProject.name;
+                (editProjectForm.elements.namedItem("description") as HTMLTextAreaElement).value = currentProject.description;
+                (editProjectForm.elements.namedItem("userRole") as HTMLSelectElement).value = currentProject.userRole;
+                (editProjectForm.elements.namedItem("status") as HTMLSelectElement).value = currentProject.status;
+                (editProjectForm.elements.namedItem("finishDate") as HTMLInputElement).value = currentProject.finishDate.toISOString().split('T')[0];
 
-            (editProjectForm.elements.namedItem("name") as HTMLInputElement).value = projectName;
-            (editProjectForm.elements.namedItem("description") as HTMLTextAreaElement).value = projectDescription;
-            (editProjectForm.elements.namedItem("userRole") as HTMLSelectElement).value = projectRole;
-            (editProjectForm.elements.namedItem("status") as HTMLSelectElement).value = projectStatus;
-            (editProjectForm.elements.namedItem("finishDate") as HTMLInputElement).value = projectFinishDate;
-
-            editProjectModal.showModal();
+                editProjectModal.showModal();
+            }
         });
 
         editProjectForm.addEventListener("submit", (event) => {
@@ -231,18 +225,19 @@ document.addEventListener("DOMContentLoaded", () => {
             // Get the new to-do item details
             const description = (newTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value;
             const dueDate = (newTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value;
+            const status = (newTodoForm.elements.namedItem("status") as HTMLSelectElement).value;
 
             // Create a new to-do item element
             const todoItem = document.createElement("div");
             todoItem.className = "todo-item";
             todoItem.innerHTML = `
-                <div style="display: flex; justify-content: space-between;">
-                    <div style="display: flex; column-gap: 30px; align-items: center;">
-                        <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
-                        <p style="width:250px;" data-todo='descriptiontodo'>${description}</p>
-                    </div>
-                    <p data-todo='datetodo'>${dueDate}</p>
-                </div>
+            <div>
+                <div style="display: flex; column-gap: 10px; align-items: center;">
+                    <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
+                    <p style="width:250px;" data-todo='descriptiontodo'>${description}</p>
+                <p data-todo='datetodo'>${new Date(dueDate).toLocaleDateString()}</p>
+                <p data-todo='statustodo'>${status}</p>
+            </div>
             `;
 
             // Append the new to-do item to the to-do list
@@ -253,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Add the new to-do item to the current project's todos array
             if (currentProject) {
-                currentProject.todos.push({ description, dueDate });
+                currentProject.todos.push({ description, dueDate: new Date(dueDate).toISOString(), status });
             }
 
             // Reset the form and close the modal

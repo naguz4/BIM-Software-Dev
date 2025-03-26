@@ -16,6 +16,7 @@ export interface IProject {
 export interface ITodo {
     description: string;
     dueDate: string;
+    status: string; // Add status field
 }
 
 export class Project implements IProject {
@@ -46,6 +47,7 @@ export class Project implements IProject {
         if (!this.id) {
             this.id = uuidv4();
         }
+        this.todos = data.todos;
         this.setUI();
     }
 

@@ -145,6 +145,10 @@ form {
     border-radius: 10px;
     background-color: var(--background-100);
     color: white;
+    display: flex;
+    align-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
 
 }
 

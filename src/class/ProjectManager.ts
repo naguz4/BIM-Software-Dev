@@ -13,7 +13,8 @@ export class ProjectsManager {
         firstletters: "HC",
         todos: [{ // Ensure this is an array
             description: "Default Todo",
-            dueDate: "2024-04-09"
+            dueDate: "2024-04-09",
+            status: "active"
         }],
     };
 
