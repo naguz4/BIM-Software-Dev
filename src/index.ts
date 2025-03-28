@@ -14,6 +14,58 @@ function toggleModal(id: string) {
     }
 }
 
+function openEditTodoModal(todoItem: HTMLElement, description: string, dueDate: string, status: string) {
+    const editTodoModal = document.getElementById("edit-todo-modal") as HTMLDialogElement;
+    const editTodoForm = document.getElementById("edit-todo-form") as HTMLFormElement;
+
+    // Populate the form with the ToDo's details
+    (editTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value = description;
+    (editTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value = new Date(dueDate).toISOString().split("T")[0];
+    (editTodoForm.elements.namedItem("status") as HTMLSelectElement).value = status;
+
+    // Show the modal
+    editTodoModal.showModal();
+
+    // Handle form submission
+    editTodoForm.onsubmit = (event) => {
+        event.preventDefault();
+
+        // Get updated values
+        const updatedDescription = (editTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value;
+        const updatedDueDate = (editTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value;
+        const updatedStatus = (editTodoForm.elements.namedItem("status") as HTMLSelectElement).value;
+
+        // Update the ToDo item in the UI
+        todoItem.querySelector("[data-todo='descriptiontodo']")!.textContent = updatedDescription;
+        todoItem.querySelector("[data-todo='datetodo']")!.textContent = new Date(updatedDueDate).toLocaleDateString();
+        todoItem.querySelector("[data-todo='statustodo']")!.textContent = updatedStatus;
+
+        // Update the class for the status
+        todoItem.className = `todo-item ${updatedStatus}`;
+
+        // Update the ToDo item in the current project's todos array
+        if (currentProject) {
+            const todoIndex = currentProject.todos.findIndex((todo) => todo.description === description && todo.dueDate === dueDate);
+            if (todoIndex !== -1) {
+                currentProject.todos[todoIndex] = {
+                    description: updatedDescription,
+                    dueDate: new Date(updatedDueDate).toISOString(),
+                    status: updatedStatus,
+                };
+            }
+        }
+
+        // Close the modal
+        editTodoModal.close();
+    };
+
+    // Handle cancel button
+    const cancelButton = document.getElementById("edit-todo-cancel-button") as HTMLButtonElement;
+    cancelButton.onclick = () => {
+        editTodoModal.close();
+    };
+}
+
 const projectsListUI = document.getElementById("projects-list") as HTMLElement;
 const projectsManager = new ProjectsManager(projectsListUI);
 
@@ -229,16 +281,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Create a new to-do item element
             const todoItem = document.createElement("div");
-            todoItem.className = "todo-item";
+            todoItem.className = `todo-item ${status}`;
             todoItem.innerHTML = `
-            <div>
-                <div style="display: flex; column-gap: 10px; align-items: center;">
-                    <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
-                    <p style="width:250px;" data-todo='descriptiontodo'>${description}</p>
-                <p data-todo='datetodo'>${new Date(dueDate).toLocaleDateString()}</p>
-                <p data-todo='statustodo'>${status}</p>
-            </div>
+                <div style="position: relative;">
+                    <div style="display: flex; column-gap: 10px; align-items: center;">
+                        <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
+                        <p style="width:250px;" data-todo='descriptiontodo'>${description}</p>
+                        <p data-todo='datetodo'>${new Date(dueDate).toLocaleDateString()}</p>
+                        <p data-todo='statustodo'>${status}</p>
+                    </div>
+                    <button class="edit-todo-btn" style="position: absolute; top: 0; right: 0; display: none;">Edit</button>
+                </div>
             `;
+
+            // Show the edit button on hover
+            todoItem.addEventListener("mouseenter", () => {
+                const editButton = todoItem.querySelector(".edit-todo-btn") as HTMLButtonElement;
+                editButton.style.display = "block";
+            });
+
+            todoItem.addEventListener("mouseleave", () => {
+                const editButton = todoItem.querySelector(".edit-todo-btn") as HTMLButtonElement;
+                editButton.style.display = "none";
+            });
 
             // Append the new to-do item to the to-do list
             const todoList = document.querySelector(".dashboard-card .todo-item")?.parentElement;
@@ -250,6 +315,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentProject) {
                 currentProject.todos.push({ description, dueDate: new Date(dueDate).toISOString(), status });
             }
+
+            // Add event listener for the edit button
+            const editButton = todoItem.querySelector(".edit-todo-btn") as HTMLButtonElement;
+            editButton.addEventListener("click", () => openEditTodoModal(todoItem, description, dueDate, status));
 
             // Reset the form and close the modal
             newTodoForm.reset();

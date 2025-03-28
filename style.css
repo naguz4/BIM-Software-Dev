@@ -253,6 +253,18 @@ label {
     background-color: var(--primary);
 }
 
+.todo-item.pending {
+    background-color: rgb(155, 16, 20);
+}
+
+.todo-item.in-progress {
+    background-color: rgb(23, 72, 88);
+}
+
+.todo-item.completed {
+    background-color: rgb(31, 148, 31);
+}
+
 .close {
 	background: #606061;
 	color: #FFFFFF;
