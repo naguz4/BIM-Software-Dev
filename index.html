@@ -188,7 +188,7 @@
                         <div style="display: flex; flex-direction: column;margin: 20px;">
                             <div class="todo-item">
                                 <div style="display: flex; justify-content: space-between;">
-                                    <div style="display: flex; column-gap: 10px;align-items: center;">
+                                    <div style="display: flex; column-gap: 30px;align-items: center;">
                                         <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex;
                             align-items: center; justify-content: center;" >construction</span>
                                         <p style= "width:250px;">Make anything here as you want, even</p>
@@ -199,23 +199,41 @@
                             </div>
                         </div>
                         <dialog id="new-todo-modal">
-                          <form id="new-todo-form">
-                              <label for="description">Description:</label>
-                              <textarea name="description" required></textarea>
-                              <label for="dueDate">Due Date:</label>
-                              <input type="date" name="dueDate" required>
-                              <label for="status">Status:</label>
-                              <select name="status" required>
-                                <option value="pending">Pending</option>
-                                <option value="in-progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                              </select>
-                              <div>
-                              <button type="submit">Add ToDo</button>
-                              <button type="button" id="todo-cancel-button">Cancel</button>
-                              </div>
-                          </form>
-                      </dialog>
+                            <form id="new-todo-form">
+                                <h2>New To-Do Item</h2>
+                                <div class="input-list">
+                                    <div class="form-field-container">
+                                        <label><span class="material-symbols-outlined">description</span>Description</label>
+                                        <textarea name="description" cols="30" rows="5" id="todo-description"></textarea>
+                                    </div>
+                                    <div class="form-field-container">
+                                        <label><span class="material-symbols-outlined">calendar_month</span>Due Date</label>
+                                        <input name="dueDate" type="date" id="todo-dueDate">
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id="todo-cancel-button" type="button">Cancel</button>
+                                    <button type="submit">Save</button>
+                                </div>
+                            </form>
+                        </dialog>
+                        <dialog id="edit-todo-modal">
+                            <form id="edit-todo-form">
+                                <h2>Edit ToDo</h2>
+                                <label for="edit-description">Description:</label>
+                                <textarea name="description" id="edit-description" required></textarea>
+                                <label for="edit-dueDate">Due Date:</label>
+                                <input type="date" name="dueDate" id="edit-dueDate" required>
+                                <label for="edit-status">Status:</label>
+                                <select name="status" id="edit-status" required>
+                                    <option value="pending">Pending</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                                <button type="submit">Save Changes</button>
+                                <button type="button" id="edit-todo-cancel-button">Cancel</button>
+                            </form>
+                        </dialog>
                     </div>
                 </div>
                 <div id="viewer-container" class="dashboard-card"></div>
