@@ -200,21 +200,18 @@
                         </div>
                         <dialog id="new-todo-modal">
                             <form id="new-todo-form">
-                                <h2>New To-Do Item</h2>
-                                <div class="input-list">
-                                    <div class="form-field-container">
-                                        <label><span class="material-symbols-outlined">description</span>Description</label>
-                                        <textarea name="description" cols="30" rows="5" id="todo-description"></textarea>
-                                    </div>
-                                    <div class="form-field-container">
-                                        <label><span class="material-symbols-outlined">calendar_month</span>Due Date</label>
-                                        <input name="dueDate" type="date" id="todo-dueDate">
-                                    </div>
-                                </div>
-                                <div>
-                                    <button id="todo-cancel-button" type="button">Cancel</button>
-                                    <button type="submit">Save</button>
-                                </div>
+                                <label for="description">Description:</label>
+                                <textarea name="description" required></textarea>
+                                <label for="dueDate">Due Date:</label>
+                                <input type="date" name="dueDate" required>
+                                <label for="status">Status:</label>
+                                <select name="status" required>
+                                    <option value="pending">Pending</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                                <button type="submit">Add ToDo</button>
+                                <button type="button" id="todo-cancel-button">Cancel</button>
                             </form>
                         </dialog>
                         <dialog id="edit-todo-modal">
