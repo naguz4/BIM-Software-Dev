@@ -1,4 +1,4 @@
-import { IProject, UserRole, ProjecStatus } from "./class/Project";
+import { IProject, UserRole, ProjecStatus, ITodo, Project } from "./class/Project";
 import { ProjectsManager } from "./class/ProjectManager";
 
 function toggleModal(id: string) {
@@ -14,8 +14,62 @@ function toggleModal(id: string) {
     }
 }
 
+function openEditTodoModal(todoItem: HTMLElement, description: string, dueDate: string, status: string) {
+    const editTodoModal = document.getElementById("edit-todo-modal") as HTMLDialogElement;
+    const editTodoForm = document.getElementById("edit-todo-form") as HTMLFormElement;
+
+    // Populate the form with the ToDo's details
+    (editTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value = description;
+    (editTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value = new Date(dueDate).toISOString().split("T")[0];
+    (editTodoForm.elements.namedItem("status") as HTMLSelectElement).value = status;
+
+    // Show the modal
+    editTodoModal.showModal();
+
+    // Handle form submission
+    editTodoForm.onsubmit = (event) => {
+        event.preventDefault();
+
+        // Get updated values
+        const updatedDescription = (editTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value;
+        const updatedDueDate = (editTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value;
+        const updatedStatus = (editTodoForm.elements.namedItem("status") as HTMLSelectElement).value;
+
+        // Update the ToDo item in the UI
+        todoItem.querySelector("[data-todo='descriptiontodo']")!.textContent = updatedDescription;
+        todoItem.querySelector("[data-todo='datetodo']")!.textContent = new Date(updatedDueDate).toLocaleDateString();
+        todoItem.querySelector("[data-todo='statustodo']")!.textContent = updatedStatus;
+
+        // Update the class for the status
+        todoItem.className = `todo-item ${updatedStatus}`;
+
+        // Update the ToDo item in the current project's todos array
+        if (currentProject) {
+            const todoIndex = currentProject.todos.findIndex((todo) => todo.description === description && todo.dueDate === dueDate);
+            if (todoIndex !== -1) {
+                currentProject.todos[todoIndex] = {
+                    description: updatedDescription,
+                    dueDate: new Date(updatedDueDate).toISOString(),
+                    status: updatedStatus,
+                };
+            }
+        }
+
+        // Close the modal
+        editTodoModal.close();
+    };
+
+    // Handle cancel button
+    const cancelButton = document.getElementById("edit-todo-cancel-button") as HTMLButtonElement;
+    cancelButton.onclick = () => {
+        editTodoModal.close();
+    };
+}
+
 const projectsListUI = document.getElementById("projects-list") as HTMLElement;
 const projectsManager = new ProjectsManager(projectsListUI);
+
+let currentProject: Project | null = null;
 
 const newProjectBtn = document.getElementById("new-project-btn");
 if (newProjectBtn) {
@@ -79,17 +133,22 @@ if (projectForm && projectForm instanceof HTMLFormElement) {
         }
 
         const formData = new FormData(projectForm);
+        const finishDateValue = formData.get("finishDate") as string;
+        const finishDate = finishDateValue ? new Date(finishDateValue) : new Date(); // Set default date to current date if not provided
+
         const projectData: IProject = {
             name: formData.get("name") as string,
             description: formData.get("description") as string,
             status: formData.get("status") as ProjecStatus,
             userRole: formData.get("userRole") as UserRole,
-            finishDate: new Date(formData.get("finishDate") as string),
+            finishDate: finishDate,
             firstletters: getInitials(formData.get("name") as string),
+            todos: [], // Initialize todos
         };
 
         try {
             const project = projectsManager.newProject(projectData);
+            currentProject = project; // Set the current project
             projectForm.reset();
             toggleModal("new-project-modal");
         } catch (err) {
@@ -143,25 +202,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (editProjectBtn && editProjectModal && editProjectForm) {
         editProjectBtn.addEventListener("click", () => {
-            // Populate the form with current project details
-            const projectNameElement = document.querySelector("[data-project-info='name']");
-            const projectName = projectNameElement ? projectNameElement.textContent as string : "";
-            const projectDescriptionElement = document.querySelector("[data-project-info='Description']");
-            const projectDescription = projectDescriptionElement ? projectDescriptionElement.textContent as string : "";
-            const projectRoleElement = document.querySelector("[data-project-info='userRole']");
-            const projectRole = projectRoleElement ? projectRoleElement.textContent as string : "";
-            const projectStatusElement = document.querySelector("[data-project-info='status']");
-            const projectStatus = projectStatusElement ? projectStatusElement.textContent as string : "";
-            const projectFinishDateElement = document.querySelector("[data-project-info='finishDate']");
-            const projectFinishDate = projectFinishDateElement ? projectFinishDateElement.textContent as string : "";
+            if (currentProject) {
+                // Populate the form with current project details
+                (editProjectForm.elements.namedItem("name") as HTMLInputElement).value = currentProject.name;
+                (editProjectForm.elements.namedItem("description") as HTMLTextAreaElement).value = currentProject.description;
+                (editProjectForm.elements.namedItem("userRole") as HTMLSelectElement).value = currentProject.userRole;
+                (editProjectForm.elements.namedItem("status") as HTMLSelectElement).value = currentProject.status;
+                (editProjectForm.elements.namedItem("finishDate") as HTMLInputElement).value = currentProject.finishDate.toISOString().split('T')[0];
 
-            (editProjectForm.elements.namedItem("name") as HTMLInputElement).value = projectName;
-            (editProjectForm.elements.namedItem("description") as HTMLTextAreaElement).value = projectDescription;
-            (editProjectForm.elements.namedItem("userRole") as HTMLSelectElement).value = projectRole;
-            (editProjectForm.elements.namedItem("status") as HTMLSelectElement).value = projectStatus;
-            (editProjectForm.elements.namedItem("finishDate") as HTMLInputElement).value = projectFinishDate;
-
-            editProjectModal.showModal();
+                editProjectModal.showModal();
+            }
         });
 
         editProjectForm.addEventListener("submit", (event) => {
@@ -174,25 +224,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const updatedStatus = (editProjectForm.elements.namedItem("status") as HTMLSelectElement).value;
             const updatedFinishDate = (editProjectForm.elements.namedItem("finishDate") as HTMLInputElement).value;
 
-            const nameElement = document.querySelector("[data-project-info='name']");
-            if (nameElement) {
-                nameElement.textContent = updatedName;
-            }
-            const descriptionElement = document.querySelector("[data-project-info='Description']");
-            if (descriptionElement) {
-                descriptionElement.textContent = updatedDescription;
-            }
-            const userRoleElement = document.querySelector("[data-project-info='userRole']");
-            if (userRoleElement) {
-                userRoleElement.textContent = updatedRole;
-            }
-            const statusElement = document.querySelector("[data-project-info='status']");
-            if (statusElement) {
-                statusElement.textContent = updatedStatus;
-            }
-            const finishDateElement = document.querySelector("[data-project-info='finishDate']");
-            if (finishDateElement) {
-                finishDateElement.textContent = updatedFinishDate;
+            if (currentProject) {
+                currentProject.name = updatedName;
+                currentProject.description = updatedDescription;
+                currentProject.userRole = updatedRole as UserRole;
+                currentProject.status = updatedStatus as ProjecStatus;
+                currentProject.finishDate = new Date(updatedFinishDate);
+                currentProject.firstletters = getInitials(updatedName);
+
+                // Update the dashboard card
+                projectsManager.setdashboard(currentProject);
+
+                // Update the project card
+                const projectCard = currentProject.ui;
+                const projectCardName = projectCard.querySelector("[data-project-info='name']");
+                const projectCardDescription = projectCard.querySelector("[data-project-info='Description']");
+                if (projectCardName) {
+                    projectCardName.textContent = updatedName;
+                }
+                if (projectCardDescription) {
+                    projectCardDescription.textContent = updatedDescription;
+                }
             }
 
             editProjectModal.close();
@@ -225,32 +277,55 @@ document.addEventListener("DOMContentLoaded", () => {
             // Get the new to-do item details
             const description = (newTodoForm.elements.namedItem("description") as HTMLTextAreaElement).value;
             const dueDate = (newTodoForm.elements.namedItem("dueDate") as HTMLInputElement).value;
+            const status = (newTodoForm.elements.namedItem("status") as HTMLSelectElement).value;
 
             // Create a new to-do item element
             const todoItem = document.createElement("div");
-            todoItem.className = "todo-item";
+            todoItem.className = `todo-item ${status}`;
             todoItem.innerHTML = `
-                <div style="display: flex; justify-content: space-between;">
-                    <div style="display: flex; column-gap: 30px; align-items: center;">
+                <div style="position: relative;">
+                    <div style="display: flex; column-gap: 10px; align-items: center;">
                         <span class="material-symbols-outlined" style="background-color:rgb(108, 107, 105); border-radius: 30%; width: 40px; height: 40px; text-align: center; display: inline-block; display: flex; align-items: center; justify-content: center;">construction</span>
-                        <p style="width:250px;">${description}</p>
+                        <p style="width:250px;" data-todo='descriptiontodo'>${description}</p>
+                        <p data-todo='datetodo'>${new Date(dueDate).toLocaleDateString()}</p>
+                        <p data-todo='statustodo'>${status}</p>
                     </div>
-                    <p>${dueDate}</p>
+                    <button class="edit-todo-btn" style="position: absolute; top: 0; right: 0; display: none;">Edit</button>
                 </div>
             `;
 
+            // Show the edit button on hover
+            todoItem.addEventListener("mouseenter", () => {
+                const editButton = todoItem.querySelector(".edit-todo-btn") as HTMLButtonElement;
+                editButton.style.display = "block";
+            });
+
+            todoItem.addEventListener("mouseleave", () => {
+                const editButton = todoItem.querySelector(".edit-todo-btn") as HTMLButtonElement;
+                editButton.style.display = "none";
+            });
+
             // Append the new to-do item to the to-do list
-            const todoList = (document.querySelector(".dashboard-card .todo-item") as HTMLElement).parentElement;
+            const todoList = document.querySelector(".dashboard-card .todo-item")?.parentElement;
             if (todoList) {
                 todoList.appendChild(todoItem);
             }
+
+            // Add the new to-do item to the current project's todos array
+            if (currentProject) {
+                currentProject.todos.push({ description, dueDate: new Date(dueDate).toISOString(), status });
+            }
+
+            // Add event listener for the edit button
+            const editButton = todoItem.querySelector(".edit-todo-btn") as HTMLButtonElement;
+            editButton.addEventListener("click", () => openEditTodoModal(todoItem, description, dueDate, status));
 
             // Reset the form and close the modal
             newTodoForm.reset();
             newTodoModal.close();
         });
 
-        (document.getElementById("todo-cancel-button")as HTMLElement).addEventListener("click", () => {
+        (document.getElementById("todo-cancel-button") as HTMLElement).addEventListener("click", () => {
             newTodoModal.close();
         });
     }

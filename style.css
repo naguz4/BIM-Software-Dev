@@ -145,6 +145,10 @@ form {
     border-radius: 10px;
     background-color: var(--background-100);
     color: white;
+    display: flex;
+    align-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
 
 }
 
@@ -247,6 +251,18 @@ label {
 
 .todo-item:hover {
     background-color: var(--primary);
+}
+
+.todo-item.pending {
+    background-color: rgb(155, 16, 20);
+}
+
+.todo-item.in-progress {
+    background-color: rgb(23, 72, 88);
+}
+
+.todo-item.completed {
+    background-color: rgb(31, 148, 31);
 }
 
 .close {
