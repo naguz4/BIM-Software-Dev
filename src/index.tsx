@@ -17,10 +17,6 @@ appRoot.render(
     
 )
 
-
-
-
-
 //ThreeJS viewer
 
 const scene = new THREE.Scene();
