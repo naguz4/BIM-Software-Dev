@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IProject, UserRole, ProjecStatus, Project } from '../src/class/Project';
-import { ProjectsManager } from '../src/class/ProjectManager';
+import { ProjectsManager } from '../src/class/ProjectManager'
 
 export function ProjectPage() {
     const projectsManager = new ProjectsManager();
