@@ -2,7 +2,6 @@ import { IProject, Project, ITodo } from "./Project";
 
 export class ProjectsManager {
     list: Project[] = [];
-    ui: HTMLElement;
     currentProject: Project | null = null;
     defaultProjectData: IProject = {
         name: "Default Project Name",
@@ -18,9 +17,7 @@ export class ProjectsManager {
         }],
     };
 
-    constructor(container: HTMLElement) {
-        this.ui = container;
-        this.ui.innerHTML = "";
+    constructor() {
         this.newProject(this.defaultProjectData);
     }
 
@@ -49,7 +46,6 @@ export class ProjectsManager {
             this.setdashboard(project);
             this.currentProject = project; // Set the current project
         });
-        this.ui.append(project.ui);
         this.list.push(project);
         return project;
     }
