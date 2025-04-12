@@ -2,6 +2,8 @@ import { IProject, Project, ITodo } from "./Project";
 
 export class ProjectsManager {
     list: Project[] = [];
+    OnProjectCreated = (project: Project) => {}
+    onProjectDeleted = (project: Project) => {}
     currentProject: Project | null = null;
     defaultProjectData: IProject = {
         name: "Default Project Name",
@@ -34,37 +36,11 @@ export class ProjectsManager {
         }
         const projectData = { ...data, todos: Array.from(data.todos) }; // Ensure todos is a new array instance
         const project = new Project(projectData);
-        project.ui.addEventListener("click", () => {
-            const projectsPage = document.getElementById("projects-page");
-            const detailsPage = document.getElementById("project-details");
-            if (!(projectsPage && detailsPage)) {
-                return;
-            }
-            projectsPage.style.display = "none";
-            detailsPage.style.display = "flex";
-            this.setDetailsPage(project);
-            this.setdashboard(project);
-            this.currentProject = project; // Set the current project
-        });
         this.list.push(project);
+        this.OnProjectCreated(project)
         return project;
     }
 
-    private setDetailsPage(project: Project) {
-        const detailPage = document.getElementById("project-details");
-        if (!detailPage) {
-            return;
-        }
-        const name = detailPage.querySelector("[data-project-info='name']");
-        if (name) {
-            name.textContent = project.name;
-        }
-        const description = detailPage.querySelector("[data-project-info='Description']");
-        if (description) {
-            description.textContent = project.description;
-        }
-        this.currentProject = project; // Set the current project
-    }
 
     setdashboard(project: Project) {
         const dashboardcard = document.getElementById("dashboard-card");
@@ -136,11 +112,11 @@ export class ProjectsManager {
         if (!project) {
             return;
         }
-        project.ui.remove();
         const remaining = this.list.filter((project) => {
             return project.id !== id;
         });
         this.list = remaining;
+        this.onProjectDeleted(project);
     }
 
     exportToJSON(fileName: string = "projects") {

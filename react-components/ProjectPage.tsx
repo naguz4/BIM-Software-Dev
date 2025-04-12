@@ -1,9 +1,22 @@
 import * as React from 'react';///
 import { IProject, UserRole, ProjecStatus, Project } from '../src/class/Project';
 import { ProjectsManager } from '../src/class/ProjectManager'
+import { ProjectCard } from './ProjectCard';
 
 export function ProjectPage() {
-    const projectsManager = new ProjectsManager();
+    
+    const [projectsManager] = React.useState (new ProjectsManager());
+    const [projects, setProjects] = React.useState<Project[]>(projectsManager.list);
+    projectsManager.OnProjectCreated = () => {setProjects([...projectsManager.list])}
+    projectsManager.onProjectDeleted = () => {setProjects([...projectsManager.list])}
+
+    const projectCards = projects.map((project) => {
+      return <ProjectCard project={project} key={project.id} />
+    })
+
+    React.useEffect(() => {
+      console.log("Project updated", projects)
+    }, [projects])
     const onFormSubmit = (e: React.FormEvent) => {
                 const projectForm = document.getElementById("new-project-form");
                 if (!(projectForm && projectForm instanceof HTMLFormElement)) {return}
@@ -53,7 +66,6 @@ export function ProjectPage() {
         
                 try {
                     const project = projectsManager.newProject(projectData);
-                    console.log(project)
                     let currentProject: Project | null = null;
                     currentProject = project; // Set the current project
                     projectForm.reset();
@@ -171,91 +183,7 @@ export function ProjectPage() {
             <button onClick={onNewProjectClick} id="new-project-btn">New Project</button>
           </div>
         </header>
-        <div id="projects-list">
-          <div className="project-card">
-            <div className="card-header">
-              <p
-                style={{
-                  backgroundColor: "orange",
-                  padding: 10,
-                  borderRadius: 8,
-                  aspectRatio: 1,
-                  textTransform: "uppercase"
-                }}
-              >
-                HC
-              </p>
-              <div>
-                <h5>Project Name</h5>
-                <p>Project Description</p>
-              </div>
-            </div>
-            <div className="card-content">
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Role</p>
-                <p>Enginner</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Cost</p>
-                <p>$200000</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Estimated Progress</p>
-                <p>45%</p>
-              </div>
-            </div>
-          </div>
-          <div className="project-card">
-            <div className="card-header">
-              <p
-                className="initials"
-                style={{
-                  backgroundColor: "orange",
-                  padding: 10,
-                  borderRadius: 8,
-                  aspectRatio: 1,
-                  textTransform: "uppercase"
-                }}
-              >
-                HC
-              </p>
-              <div>
-                <h5>Project Name</h5>
-                <p>Project Description</p>
-              </div>
-            </div>
-            <div className="card-content">
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Role</p>
-                <p>Enginner</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Cost</p>
-                <p>$200000</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Estimated Progress</p>
-                <p>45%</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div id="projects-list">{ projectCards }</div>
       </div>
       )
 }

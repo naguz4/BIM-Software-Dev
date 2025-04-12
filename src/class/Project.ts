@@ -29,7 +29,6 @@ export class Project implements IProject {
     todos: ITodo[] = [];
     color: string;
 
-    ui: HTMLDivElement;
     cost: number = 0;
     progress: number = 0;
     id: string;
@@ -48,43 +47,8 @@ export class Project implements IProject {
             this.id = uuidv4();
         }
         this.todos = data.todos;
-        this.setUI();
     }
 
-    setUI() {
-        const colorClasses = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5', 'color-6'];
-        const randomColorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
-
-        if (this.ui) { return; }
-        this.ui = document.createElement("div");
-        this.ui.className = "project-card";
-        this.ui.innerHTML = `
-        <div class="card-header">
-            <p class="initials ${randomColorClass}">${this.firstletters}</p>
-            <div>
-                <h5 data-project-info="name">${this.name}</h5>
-                <p data-project-info="Description">${this.description}</p>
-            </div>
-        </div>
-        <div class="card-content">
-            <div class="card-property">
-                <p style="color: beige;">Status</p>
-                <p>${this.status}</p>
-            </div>
-            <div class="card-property">
-                <p style="color: beige;">Role</p>
-                <p>${this.userRole}</p>
-            </div>
-            <div class="card-property">
-                <p style="color: beige;">Cost</p>
-                <p>$${this.cost}</p>
-            </div>
-            <div class="card-property">
-                <p style="color: beige;">Estimated Progress</p>
-                <p>${this.progress * 100}%</p>
-            </div>
-        </div>`;
-    }
 }
 
 
