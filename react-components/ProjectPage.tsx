@@ -1,17 +1,26 @@
-import * as React from 'react';///
+import * as React from 'react';
+import * as Router from "react-router-dom";
 import { IProject, UserRole, ProjecStatus, Project } from '../src/class/Project';
 import { ProjectsManager } from '../src/class/ProjectManager'
 import { ProjectCard } from './ProjectCard';
 
-export function ProjectPage() {
+interface Props {
+  projectsManager: ProjectsManager;
+}
+
+export function ProjectPage(props: Props) {
     
-    const [projectsManager] = React.useState (new ProjectsManager());
-    const [projects, setProjects] = React.useState<Project[]>(projectsManager.list);
-    projectsManager.OnProjectCreated = () => {setProjects([...projectsManager.list])}
-    projectsManager.onProjectDeleted = () => {setProjects([...projectsManager.list])}
+    
+    const [projects, setProjects] = React.useState<Project[]>(props.projectsManager.list);
+    props.projectsManager.OnProjectCreated = () => {setProjects([...props.projectsManager.list])}
+    props.projectsManager.onProjectDeleted = () => {setProjects([...props.projectsManager.list])}
 
     const projectCards = projects.map((project) => {
-      return <ProjectCard project={project} key={project.id} />
+      return (
+      <Router.Link to={`/project/${project.id}`} key={project.id}>
+        <ProjectCard project={project}  />
+      </Router.Link>
+      )
     })
 
     React.useEffect(() => {
@@ -65,7 +74,7 @@ export function ProjectPage() {
                 };
         
                 try {
-                    const project = projectsManager.newProject(projectData);
+                    const project = props.projectsManager.newProject(projectData);
                     let currentProject: Project | null = null;
                     currentProject = project; // Set the current project
                     projectForm.reset();
@@ -89,11 +98,11 @@ export function ProjectPage() {
     
 
     const onFileUploadClick = () => {
-        projectsManager.importFromJSON();
+        props.projectsManager.importFromJSON();
     }
 
     const onFileDownloadClick = () => {
-        projectsManager.exportToJSON();
+        props.projectsManager.exportToJSON();
     }
 
     return(        
