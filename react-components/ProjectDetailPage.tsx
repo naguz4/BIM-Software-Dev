@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { ProjectsManager } from '../src/class/ProjectManager';
+import { IProject, UserRole, ProjecStatus, Project, ITodo } from '../src/class/Project';
 import * as Router from "react-router-dom";
+import { ProjectTodo } from './ProjectTodo';
+//import { TodoItem } from './TodoItem';
+
 
 interface Props {
     projectsManager: ProjectsManager;
@@ -8,13 +12,14 @@ interface Props {
 
 
 export function ProjectDetailPage(props: Props) {
+
   const routeParams = Router.useParams<{id: string}>()
   const projectid = routeParams.id
   if (!projectid) {
     return <div>id not found</div>
   }
 
-  const project = props.projectsManager.getProject(projectid)
+  const project = props.projectsManager.getProject(projectid as string)
   if (!project) {
     return <div>Project not found</div>
   }
@@ -122,56 +127,14 @@ export function ProjectDetailPage(props: Props) {
             >
               <p style={{ textAlign: "center" }}>{project.progress}%</p>
             </div>
+           
           </div>
+          
         </div>
+        <ProjectTodo projectsManager={props.projectsManager} project={project}/>
+        
       </div>
-      <div className="dashboard-card" style={{ flexGrow: 1 }}>
-        <div
-          style={{
-            padding: "20px 30px",
-            display: "flex",
-            alignItems: "center",
-            gap: 40,
-            justifyContent: "space-between"
-          }}
-        >
-          <h4>To-Do</h4>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span className="material-symbols-outlined">search</span>
-            <input type="text" placeholder="Search To-Do" />
-          </div>
-          <button className="material-symbols-outlined add">add</button>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", margin: 20 }}>
-          <div className="todo-item">
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div
-                style={{ display: "flex", columnGap: 30, alignItems: "center" }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    backgroundColor: "rgb(108, 107, 105)",
-                    borderRadius: "30%",
-                    width: 40,
-                    height: 40,
-                    textAlign: "center",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  construction
-                </span>
-                <p style={{ width: 250 }}>
-                  Make anything here as you want, even
-                </p>
-              </div>
-              <p>20/05/2005</p>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
 </div>

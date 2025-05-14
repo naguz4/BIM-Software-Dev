@@ -18,6 +18,34 @@ export class ProjectsManager {
             status: "active"
         }],
     };
+    setCurrentProject(project: Project) {
+        this.currentProject = project;
+        this.setdashboard(project);
+    }
+    addtodo(projectId: string, description: string, dueDate: Date, status: string) {
+        const project = this.getProject(projectId);
+        if (!project) {
+            console.error(`Project with ID ${projectId} not found`);
+            return;
+        }
+        const todo: ITodo = {
+            description,
+            dueDate: dueDate.toISOString(),
+            status,
+        };
+        project.todos.push(todo);
+    
+        // Trigger any necessary updates (e.g., re-rendering)
+        this.updateProject(project);
+    }
+    
+
+    updateProject(updatedProject: Project) {
+        const index = this.list.findIndex((project) => project.id === updatedProject.id);
+        if (index !== -1) {
+            this.list[index] = updatedProject;
+        }
+    }
 
     constructor() {
         this.newProject(this.defaultProjectData);
