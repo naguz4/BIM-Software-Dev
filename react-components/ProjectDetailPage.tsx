@@ -3,6 +3,7 @@ import { ProjectsManager } from '../src/class/ProjectManager';
 import { IProject, UserRole, ProjecStatus, Project, ITodo } from '../src/class/Project';
 import * as Router from "react-router-dom";
 import { ProjectTodo } from './ProjectTodo';
+import { div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
 
 
@@ -15,14 +16,55 @@ export function ProjectDetailPage(props: Props) {
 
   const routeParams = Router.useParams<{id: string}>()
   const projectid = routeParams.id
-  if (!projectid) {
-    return <div>id not found</div>
-  }
 
-  const project = props.projectsManager.getProject(projectid as string)
-  if (!project) {
-    return <div>Project not found</div>
+  const [project, setProject] = React.useState<Project | null>(props.projectsManager.getProject(projectid as string) || null);
+  const [isEditOpen, setIsEditOpen] = React.useState(false);
+  const [editData, setEditData] = React.useState({
+        name: project?.name || "",
+        description: project?.description || "",
+        userRole: project?.userRole || "architect",
+        status: project?.status || "active",
+        finishDate: project?.finishDate ? new Date(project.finishDate).toISOString().split("T")[0] : "",
+  });
+
+  React.useEffect(() => {
+      setProject(props.projectsManager.getProject(projectid as string) || null);
+  }, [props.projectsManager, projectid]);
+  
+  if (!projectid) {
+    return alert("id not found");
   }
+  if (!project) {
+    return alert("Project not found");
+
+  }
+      const handleEditOpen = () => {
+        setEditData({
+            name: project.name,
+            description: project.description,
+            userRole: project.userRole,
+            status: project.status,
+            finishDate: project.finishDate ? new Date(project.finishDate).toISOString().split("T")[0] : "",
+        });
+        setIsEditOpen(true);
+    };
+
+    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setEditData({ ...editData, [e.target.name]: e.target.value });
+    };
+
+    const handleEditSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Update the project object
+        project.name = editData.name;
+        project.description = editData.description;
+        project.userRole = editData.userRole as any;
+        project.status = editData.status as any;
+        project.finishDate = new Date(editData.finishDate);
+        props.projectsManager.updateProject(project);
+        setProject({ ...project });
+        setIsEditOpen(false);
+    };
     return (
         <div className="page" id="project-details">
   <header>
@@ -58,8 +100,8 @@ export function ProjectDetailPage(props: Props) {
           >
             HC
           </p>
-          <button className="btn-secondary">
-            <p style={{ width: 20 }}>Edit</p>
+          <button className="btn-secondary" onClick={handleEditOpen}>
+             <p style={{ width: 20 }}>Edit</p>
           </button>
         </div>
         <div style={{ padding: "0 30px" }}>
@@ -137,9 +179,49 @@ export function ProjectDetailPage(props: Props) {
 
     </div>
   </div>
+              {/* Edit Modal */}
+            {isEditOpen && (
+                <dialog open>
+                    <form onSubmit={handleEditSubmit} style={{ background: "#222", color: "#fff", padding: 20, borderRadius: 10, minWidth: 350 }}>
+                        <h2>Edit Project</h2>
+                        <label>
+                            Name:
+                            <input name="name" value={editData.name} onChange={handleEditChange} required />
+                        </label>
+                        <label>
+                            Description:
+                            <textarea name="description" value={editData.description} onChange={handleEditChange} required />
+                        </label>
+                        <label>
+                            Role:
+                            <select name="userRole" value={editData.userRole} onChange={handleEditChange}>
+                                <option value="architect">Architect</option>
+                                <option value="engineer">Engineer</option>
+                                <option value="developer">Developer</option>
+                            </select>
+                        </label>
+                        <label>
+                            Status:
+                            <select name="status" value={editData.status} onChange={handleEditChange}>
+                                <option value="pending">Pending</option>
+                                <option value="active">Active</option>
+                                <option value="finished">Finished</option>
+                            </select>
+                        </label>
+                        <label>
+                            Finish Date:
+                            <input name="finishDate" type="date" value={editData.finishDate} onChange={handleEditChange} required />
+                        </label>
+                        <div style={{ marginTop: 10 }}>
+                            <button type="submit">Save</button>
+                            <button type="button" onClick={() => setIsEditOpen(false)} style={{ marginLeft: 10 }}>Cancel</button>
+                        </div>
+                    </form>
+                </dialog>
+            )}
 </div>
 
 
-    )
+    );
 
 }

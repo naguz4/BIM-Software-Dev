@@ -3,6 +3,10 @@ import * as Router from "react-router-dom";
 import { IProject, UserRole, ProjecStatus, Project } from '../src/class/Project';
 import { ProjectsManager } from '../src/class/ProjectManager'
 import { ProjectCard } from './ProjectCard';
+import { Searchbox } from './Searchbox';
+import { Alert, AlertTitle } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
 
 interface Props {
   projectsManager: ProjectsManager;
@@ -105,6 +109,11 @@ export function ProjectPage(props: Props) {
         props.projectsManager.exportToJSON();
     }
 
+    const onProjectSearch = (value: string) => {
+      setProjects(props.projectsManager.filterProject(value))
+
+    }
+
     return(        
         <div className="page" id="projects-page" style={{ display: "flex" }}>
         <dialog id="new-project-modal">
@@ -174,6 +183,7 @@ export function ProjectPage(props: Props) {
         </dialog>
         <header>
           <h2>Projects</h2>
+          <Searchbox onChange={(value) => onProjectSearch(value)}/>
           <div>
             <button
               id="import-project-btn"
@@ -192,7 +202,14 @@ export function ProjectPage(props: Props) {
             <button onClick={onNewProjectClick} id="new-project-btn">New Project</button>
           </div>
         </header>
-        <div id="projects-list">{ projectCards }</div>
+        {
+          projects.length > 0 ? <div id="projects-list">{ projectCards }</div> : <div>
+            <Alert severity="info" style={{ margin: "20px" }}>
+              <AlertTitle>No projects found</AlertTitle>
+            </Alert>
+            </div>
+        }
+        
       </div>
       )
 }
