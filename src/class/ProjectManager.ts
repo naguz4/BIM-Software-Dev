@@ -47,9 +47,7 @@ export class ProjectsManager {
         }
     }
 
-    constructor() {
-        this.newProject(this.defaultProjectData);
-    }
+    
 
     filterProject(value: string) {
               const filteredProjects = this.list.filter((project) => {
@@ -59,7 +57,7 @@ export class ProjectsManager {
   
     }
 
-    newProject(data: IProject) {
+    newProject(data: IProject, id?: string) {
         const projectNames = this.list.map((project) => {
             return project.name;
         });
@@ -70,8 +68,8 @@ export class ProjectsManager {
         if (!data.finishDate) {
             data.finishDate = new Date("2025-02-17"); // Set default finish date if empty
         }
-        const projectData = { ...data, todos: Array.from(data.todos) }; // Ensure todos is a new array instance
-        const project = new Project(projectData);
+        const projectData = { ...data, todos: Array.from(data.todos ?? []) }; // Ensure todos is a new array instance
+        const project = new Project(data, id);
         this.list.push(project);
         this.OnProjectCreated(project)
         return project;

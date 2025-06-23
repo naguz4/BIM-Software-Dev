@@ -6,6 +6,8 @@ import { ProjectCard } from './ProjectCard';
 import { Searchbox } from './Searchbox';
 import { Alert, AlertTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import * as Firestore from "firebase/firestore";
+import { firebaseDB } from '../src/firebase';
 
 
 interface Props {
@@ -18,6 +20,29 @@ export function ProjectPage(props: Props) {
     const [projects, setProjects] = React.useState<Project[]>(props.projectsManager.list);
     props.projectsManager.OnProjectCreated = () => {setProjects([...props.projectsManager.list])}
     props.projectsManager.onProjectDeleted = () => {setProjects([...props.projectsManager.list])}
+
+    const getFirestoreProjects = async () => {
+            const projectsCollection = Firestore.collection(firebaseDB,"/projects" ) as Firestore.CollectionReference<IProject>;
+            const firebaseProjects = await Firestore.getDocs(projectsCollection)
+            for ( const doc of firebaseProjects.docs) {
+              const data = doc.data()
+              const project: IProject = {
+                ...data,
+                finishDate: (data.finishDate as unknown as Firestore.Timestamp).toDate()
+              }
+              try {
+                props.projectsManager.newProject(project, doc.id)
+              } catch (error) {
+
+              }
+              
+    }
+  }
+
+    React.useEffect(() => {
+      getFirestoreProjects();
+
+    }, [])
 
     const projectCards = projects.map((project) => {
       return (

@@ -5,6 +5,7 @@ import * as Router from "react-router-dom";
 import { ProjectTodo } from './ProjectTodo';
 import { div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
+import { ThreeViewer } from './ThreeViewer';
 
 
 interface Props {
@@ -178,6 +179,7 @@ export function ProjectDetailPage(props: Props) {
       </div>
 
     </div>
+    <ThreeViewer/>
   </div>
               {/* Edit Modal */}
             {isEditOpen && (
@@ -219,6 +221,7 @@ export function ProjectDetailPage(props: Props) {
                     </form>
                 </dialog>
             )}
+            
 </div>
 
 

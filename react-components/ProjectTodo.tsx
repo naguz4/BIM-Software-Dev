@@ -57,7 +57,7 @@ export function ProjectTodo(props: Props) {
             </div>
 
             <div style={{ display: "flex", margin: 20, flexDirection: "column", rowGap: 10 }}>
-                {todos.map((todo, index) => (
+                {(project.todos ?? []).map((todo, index) => (
                     <TodoItem key={index} todo={todo} />
                 ))}
             </div>
