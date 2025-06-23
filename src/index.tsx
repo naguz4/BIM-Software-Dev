@@ -2,10 +2,17 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import * as Router from "react-router-dom";
+<<<<<<< HEAD
 import { Sidebar } from "../src/react-components/Sidebar";
 import { ProjectPage } from "../src/react-components/ProjectPage";
 
 import { ProjectDetailPage } from "../src/react-components/ProjectDetailPage";
+=======
+import { Sidebar } from "../react-components/Sidebar";
+import { ProjectPage } from "../react-components/ProjectPage";
+
+import { ProjectDetailPage } from "../react-components/ProjectDetailPage";
+>>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component)
 import { ProjectsManager } from "../src/class/ProjectManager";
 import { ProjectTodo } from "../src/react-components/ProjectTodo";
 import * as BUI from "@thatopen/ui";

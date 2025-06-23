@@ -1,7 +1,11 @@
 
 import { initializeApp } from "firebase/app";
+<<<<<<< HEAD
 import * as Firestore from "firebase/firestore";
 import { IProject } from "../class/Project";
+=======
+import { getFirestore } from "firebase/firestore";
+>>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component)
 
 
 const firebaseConfig = {
@@ -15,6 +19,7 @@ const firebaseConfig = {
 
 
 const app = initializeApp(firebaseConfig);
+<<<<<<< HEAD
 export const firestoreDB = Firestore.getFirestore();
 
 export function getCollection<T>(path: string) {
@@ -31,3 +36,6 @@ export async function updateDocument <T extends Record<string, any>>(path: strin
   await Firestore.updateDoc(doc, data)
 }
 
+=======
+export const firebaseDB = getFirestore();
+>>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component)

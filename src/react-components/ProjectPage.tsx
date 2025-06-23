@@ -7,9 +7,13 @@ import { Searchbox } from './Searchbox';
 import { Alert, AlertTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as Firestore from "firebase/firestore";
+<<<<<<< HEAD:src/react-components/ProjectPage.tsx
 import { firestoreDB } from '../firebase';
 import { getCollection } from '../firebase';
 import { appIcons } from '../globals';
+=======
+import { firebaseDB } from '../src/firebase';
+>>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component):react-components/ProjectPage.tsx
 
 
 interface Props {
@@ -37,6 +41,29 @@ export function ProjectPage(props: Props) {
                 props.projectsManager.newProject(project, doc.id)
               } catch (error) {
                 console.error("Error adding project:", error);
+              }
+              
+    }
+  }
+
+    React.useEffect(() => {
+      getFirestoreProjects();
+
+    }, [])
+
+    const getFirestoreProjects = async () => {
+            const projectsCollection = Firestore.collection(firebaseDB,"/projects" ) as Firestore.CollectionReference<IProject>;
+            const firebaseProjects = await Firestore.getDocs(projectsCollection)
+            for ( const doc of firebaseProjects.docs) {
+              const data = doc.data()
+              const project: IProject = {
+                ...data,
+                finishDate: (data.finishDate as unknown as Firestore.Timestamp).toDate()
+              }
+              try {
+                props.projectsManager.newProject(project, doc.id)
+              } catch (error) {
+
               }
               
     }
