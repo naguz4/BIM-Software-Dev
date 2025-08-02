@@ -7,33 +7,35 @@ import { Searchbox } from './Searchbox';
 import { Alert, AlertTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as Firestore from "firebase/firestore";
-import { firebaseDB } from '../src/firebase';
+import { firestoreDB } from '../src/firebase';
+import { getCollection } from '../src/firebase';
 
 
 interface Props {
   projectsManager: ProjectsManager;
 }
 
+const projectsCollection = getCollection<IProject>("/projects");
+
 export function ProjectPage(props: Props) {
     
     
     const [projects, setProjects] = React.useState<Project[]>(props.projectsManager.list);
     props.projectsManager.OnProjectCreated = () => {setProjects([...props.projectsManager.list])}
-    props.projectsManager.onProjectDeleted = () => {setProjects([...props.projectsManager.list])}
+    
 
     const getFirestoreProjects = async () => {
-            const projectsCollection = Firestore.collection(firebaseDB,"/projects" ) as Firestore.CollectionReference<IProject>;
             const firebaseProjects = await Firestore.getDocs(projectsCollection)
             for ( const doc of firebaseProjects.docs) {
               const data = doc.data()
               const project: IProject = {
                 ...data,
-                finishDate: (data.finishDate as unknown as Firestore.Timestamp).toDate()
+                finishDate: (data.finishDate as unknown as Firestore.Timestamp).toDate(), // Convert Firestore Timestamp to Date
               }
               try {
                 props.projectsManager.newProject(project, doc.id)
               } catch (error) {
-
+                console.error("Error adding project:", error);
               }
               
     }
@@ -78,8 +80,7 @@ export function ProjectPage(props: Props) {
                 }
         
                 const formData = new FormData(projectForm);
-                const finishDateValue = formData.get("finishDate") as string;
-                const finishDate = finishDateValue ? new Date(finishDateValue) : new Date(); // Set default date to current date if not provided
+                
 
                 const getInitials = (name: string): string => {
                     const parts = name.split(" ");
@@ -97,12 +98,13 @@ export function ProjectPage(props: Props) {
                     description: formData.get("description") as string,
                     status: formData.get("status") as ProjecStatus,
                     userRole: formData.get("userRole") as UserRole,
-                    finishDate: finishDate,
+                    finishDate: new Date(formData.get("finishDate") as string),
                     firstletters: getInitials(formData.get("name") as string),
                     todos: [], // Initialize todos
                 };
         
                 try {
+                  Firestore.addDoc(projectsCollection, projectData)
                     const project = props.projectsManager.newProject(projectData);
                     let currentProject: Project | null = null;
                     currentProject = project; // Set the current project
@@ -110,6 +112,7 @@ export function ProjectPage(props: Props) {
                     const modal = document.getElementById("new-project-modal");
                     if (!(modal && modal instanceof HTMLDialogElement)) {return}
                     modal.close();
+
                 } catch (err) {
                     const errorText = document.getElementById("errorText");
                     if (errorText) {
@@ -181,7 +184,8 @@ export function ProjectPage(props: Props) {
               </div>
               <div className="form-field-container">
                 <label>
-                  <span className="material-symbols-outlined">location_on</span>Status
+                  <span className="material-symbols-outlined">location_on</span>
+                  Status
                 </label>
                 <select name="status">
                   <option>Pending</option>

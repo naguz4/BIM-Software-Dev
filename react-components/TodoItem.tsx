@@ -5,12 +5,28 @@ interface Props {
     todo: ITodo;
 }
 
+// Map status to CSS class
+const statusClassMap: Record<string, string> = {
+    pending: "pending",
+    "in-progress": "in-progress",
+    completed: "completed"
+};
+
 export function TodoItem(props: Props) {
     const { todo } = props;
+    const statusClass = statusClassMap[todo.status] || "pending";
 
     return (
-        <div style={{ display: "flex", margin: 20, flexDirection: "column", rowGap: 10 }}>
-            <div className="todo-item">
+        <div
+            className={`todo-item ${statusClass}`}
+            style={{
+                display: "flex",
+                margin: 20,
+                flexDirection: "column",
+                rowGap: 10
+            }}
+        >
+            <div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center" }}>
                         <span
@@ -28,9 +44,14 @@ export function TodoItem(props: Props) {
                         >
                             construction
                         </span>
-                        <div>
-                            <p style={{ width: 250 }}>{todo.description}</p>
-                            <p style={{ fontSize: 12 }}>{new Date(todo.dueDate).toLocaleDateString()}</p>
+                        <div style={{ display: "flex", flexDirection: "row", marginLeft: 10 }}>
+                            <p style={{ width: 150 }}>{todo.description}</p>
+                            <p style={{ fontSize: 12 }}>Due: {new Date(todo.dueDate).toLocaleDateString()}</p>
+                            <div>
+                                <p style={{ fontSize: 12, height: 30 }}>Priority: {todo.priority}</p>
+                                <p style={{ fontSize: 12, height: 30 }}>Status: {todo.status}</p>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>

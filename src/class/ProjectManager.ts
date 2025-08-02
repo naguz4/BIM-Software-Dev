@@ -3,7 +3,7 @@ import { IProject, Project, ITodo } from "./Project";
 export class ProjectsManager {
     list: Project[] = [];
     OnProjectCreated = (project: Project) => {}
-    onProjectDeleted = (project: Project) => {}
+    onProjectDeleted = (id: string) => {}
     currentProject: Project | null = null;
     defaultProjectData: IProject = {
         name: "Default Project Name",
@@ -12,17 +12,18 @@ export class ProjectsManager {
         status: "active",
         finishDate: new Date("2024-04-09"),
         firstletters: "HC",
-        todos: [{ // Ensure this is an array
+        todos: [{
             description: "Default Todo",
-            dueDate: "2024-04-09",
-            status: "active"
+            dueDate: new Date("2024-04-09"),
+            status: "active",
+            priority: "low", 
         }],
     };
     setCurrentProject(project: Project) {
         this.currentProject = project;
         this.setdashboard(project);
     }
-    addtodo(projectId: string, description: string, dueDate: Date, status: string) {
+    addtodo(projectId: string, description: string, dueDate: Date, status: string, priority: string) {
         const project = this.getProject(projectId);
         if (!project) {
             console.error(`Project with ID ${projectId} not found`);
@@ -30,11 +31,12 @@ export class ProjectsManager {
         }
         const todo: ITodo = {
             description,
-            dueDate: dueDate.toISOString(),
+            dueDate,
             status,
+            priority,
         };
         project.todos.push(todo);
-    
+
         // Trigger any necessary updates (e.g., re-rendering)
         this.updateProject(project);
     }
@@ -57,7 +59,7 @@ export class ProjectsManager {
   
     }
 
-    newProject(data: IProject, id?: string) {
+    newProject(data: any, id?: string) {
         const projectNames = this.list.map((project) => {
             return project.name;
         });
@@ -66,10 +68,25 @@ export class ProjectsManager {
             throw new Error(`A project with the name "${data.name}" already exists`);
         }
         if (!data.finishDate) {
-            data.finishDate = new Date("2025-02-17"); // Set default finish date if empty
+            data.finishDate = new Date("2025-02-17");
+        } else if (data.finishDate instanceof Date) {
+            data.finishDate = data.finishDate;
         }
-        const projectData = { ...data, todos: Array.from(data.todos ?? []) }; // Ensure todos is a new array instance
-        const project = new Project(data, id);
+        // Ensure todos are objects
+        const todos = Array.from(data.todos ?? []).map(todo => {
+            if (typeof todo === "object" && todo !== null) {
+                return { ...todo };
+            }
+            // If todo is not an object, create a default todo object
+            return {
+                description: String(todo),
+                dueDate: new Date(),
+                status: "active",
+                priority: "low"
+            };
+        });
+        const projectData = { ...data, todos };
+        const project = new Project(projectData, id);
         this.list.push(project);
         this.OnProjectCreated(project)
         return project;
@@ -150,7 +167,7 @@ export class ProjectsManager {
             return project.id !== id;
         });
         this.list = remaining;
-        this.onProjectDeleted(project);
+        this.onProjectDeleted(id)
     }
 
     exportToJSON(fileName: string = "projects") {
@@ -185,9 +202,16 @@ export class ProjectsManager {
                     existingProject.description = projectData.description;
                     existingProject.status = projectData.status;
                     existingProject.userRole = projectData.userRole;
-                    existingProject.finishDate = new Date(projectData.finishDate);
+                    existingProject.finishDate = projectData.finishDate instanceof Date
+                        ? projectData.finishDate
+                        : new Date(projectData.finishDate);
                     existingProject.firstletters = projectData.firstletters;
-                    existingProject.todos = Array.from(projectData.todos); // Ensure todos is a new array instance
+                    existingProject.todos = Array.from(projectData.todos).map(todo => ({
+                        ...todo,
+                        dueDate: typeof todo.dueDate === "string"
+                            ? new Date(todo.dueDate)
+                            : todo.dueDate
+                    }));
                     this.setdashboard(existingProject); // Update the dashboard card
                 } else {
                     // Create a new project

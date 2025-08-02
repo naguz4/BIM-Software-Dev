@@ -15,8 +15,9 @@ export interface IProject {
 
 export interface ITodo {
     description: string;
-    dueDate: string;
+    dueDate: Date;
     status: string; // Add status field
+    priority: string; // <-- add this line
 }
 
 export class Project implements IProject {

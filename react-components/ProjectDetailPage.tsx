@@ -6,6 +6,9 @@ import { ProjectTodo } from './ProjectTodo';
 import { div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
 import { ThreeViewer } from './ThreeViewer';
+import { deleteDocument } from '../src/firebase';
+import { updateDocument } from '../src/firebase';
+import { Timestamp } from 'firebase/firestore';
 
 
 interface Props {
@@ -13,7 +16,7 @@ interface Props {
 }
 
 
-export function ProjectDetailPage(props: Props) {
+export function ProjectDetailPage(props: Props)  {
 
   const routeParams = Router.useParams<{id: string}>()
   const projectid = routeParams.id
@@ -54,7 +57,7 @@ export function ProjectDetailPage(props: Props) {
         setEditData({ ...editData, [e.target.name]: e.target.value });
     };
 
-    const handleEditSubmit = (e: React.FormEvent) => {
+    const handleEditSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Update the project object
         project.name = editData.name;
@@ -65,7 +68,34 @@ export function ProjectDetailPage(props: Props) {
         props.projectsManager.updateProject(project);
         setProject({ ...project });
         setIsEditOpen(false);
+
+        try {
+            const cleanData = Object.fromEntries(
+              Object.entries({
+                name: editData.name as string,
+                description: editData.description as string,
+                userRole: editData.userRole as UserRole,
+                status: editData.status as ProjecStatus,
+                finishDate: (new Date(editData.finishDate).toLocaleDateString() as string),
+                todos: project.todos,
+                firstletters: project.firstletters as string,
+              }).filter(([_, v]) => v !== undefined)
+            );
+          console.log("Updating Firestore with:", cleanData);
+          await updateDocument("/projects", project.id, cleanData);
+        } catch (err) {
+            alert("Failed to update project in Firebase!");
+        }
     };
+
+
+
+    const navigateTo = Router.useNavigate()
+
+    props.projectsManager.onProjectDeleted = async (id) => {
+      await deleteDocument("projects", id)
+      navigateTo("/")
+    }
     return (
         <div className="page" id="project-details">
   <header>
@@ -75,6 +105,7 @@ export function ProjectDetailPage(props: Props) {
       {project.description}
       </p>
     </div>
+    <button onClick={() => {props.projectsManager.deleteProject(project.id)}} style = {{backgroundColor: "red"}}>Delete project</button>
   </header>
   <div className="main-page-content">
     <div style={{ display: "flex", flexDirection: "column", rowGap: 5 }}>
@@ -157,7 +188,7 @@ export function ProjectDetailPage(props: Props) {
               >
                 Date
               </p>
-              <p data-project-info="finishDate">{project.finishDate.toLocaleDateString()}</p>
+              <p data-project-info="finishDate">{new Date(project.finishDate).toLocaleDateString()}</p>
             </div>
           </div>
           <div style={{ backgroundColor: "#404040", borderRadius: 20 }}>
@@ -174,8 +205,8 @@ export function ProjectDetailPage(props: Props) {
           </div>
           
         </div>
-        <ProjectTodo projectsManager={props.projectsManager} project={project}/>
-        
+        <ProjectTodo projectsManager={props.projectsManager} project={project} />
+
       </div>
 
     </div>
