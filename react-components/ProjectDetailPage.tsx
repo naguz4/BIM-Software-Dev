@@ -28,7 +28,7 @@ export function ProjectDetailPage(props: Props)  {
         description: project?.description || "",
         userRole: project?.userRole || "architect",
         status: project?.status || "active",
-        finishDate: project?.finishDate ? new Date(project.finishDate).toISOString().split("T")[0] : "",
+        finishDate: project?.finishDate ? new Date(project.finishDate) : new Date(), // <-- Date object
   });
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ export function ProjectDetailPage(props: Props)  {
             description: project.description,
             userRole: project.userRole,
             status: project.status,
-            finishDate: project.finishDate ? new Date(project.finishDate).toISOString().split("T")[0] : "",
+            finishDate: project.finishDate,
         });
         setIsEditOpen(true);
     };
@@ -76,7 +76,7 @@ export function ProjectDetailPage(props: Props)  {
                 description: editData.description as string,
                 userRole: editData.userRole as UserRole,
                 status: editData.status as ProjecStatus,
-                finishDate: (new Date(editData.finishDate).toLocaleDateString() as string),
+                finishDate: editData.finishDate.toISOString(),
                 todos: project.todos,
                 firstletters: project.firstletters as string,
               }).filter(([_, v]) => v !== undefined)
@@ -243,7 +243,7 @@ export function ProjectDetailPage(props: Props)  {
                         </label>
                         <label>
                             Finish Date:
-                            <input name="finishDate" type="date" value={editData.finishDate} onChange={handleEditChange} required />
+                            <input name="finishDate" type="date" value={editData.finishDate ? editData.finishDate.toISOString().split("T")[0] : ""} onChange={e => setEditData({ ...editData, finishDate: new Date(e.target.value) })} required />
                         </label>
                         <div style={{ marginTop: 10 }}>
                             <button type="submit">Save</button>

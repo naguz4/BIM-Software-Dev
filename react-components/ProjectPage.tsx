@@ -30,7 +30,7 @@ export function ProjectPage(props: Props) {
               const data = doc.data()
               const project: IProject = {
                 ...data,
-                finishDate: (data.finishDate as unknown as Firestore.Timestamp).toDate(), // Convert Firestore Timestamp to Date
+                finishDate: (data.finishDate)
               }
               try {
                 props.projectsManager.newProject(project, doc.id)
