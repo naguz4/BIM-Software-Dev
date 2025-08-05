@@ -2,6 +2,7 @@ import * as React from "react";
 import { ProjectsManager } from "../src/class/ProjectManager";
 import { TodoItem } from "./TodoItem";
 import { updateDocument } from '../src/firebase';
+import { TodoSearchbox } from "./TodoSearchbox";
 
 interface Todo {
     description: string;
@@ -103,12 +104,26 @@ export function ProjectTodo(props: Props) {
         }
     };
 
+    // Add this function for searching todos
+    const handleTodoSearch = (value: string) => {
+        if (value.trim() === "") {
+            // Reset to all todos when search is empty
+            setTodos(project.todos);
+        } else {
+            // Filter todos by description
+            const filtered = project.todos.filter(todo =>
+                todo.description.toLowerCase().includes(value.toLowerCase())
+            );
+            setTodos(filtered);
+        }
+    };
+
     return (
         <div>
             <h4>To-Do</h4>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: 20 }}>
                 <span className="material-symbols-outlined">search</span>
-                <input style={{ width: "250px" }} type="text" placeholder="Search To-Do" />
+                <TodoSearchbox onChange={handleTodoSearch} />
                 <button
                     onClick={() => {
                         const modal = document.getElementById("new-todo-modal");

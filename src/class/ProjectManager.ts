@@ -59,6 +59,15 @@ export class ProjectsManager {
   
     }
 
+    filterTodo(value: string) {
+              const filteredTodos = this.list.flatMap((project) => project.todos).filter((todo) => {
+        return todo.description.includes(value)
+      })
+      return filteredTodos;
+  
+    }
+
+
     newProject(data: any, id?: string) {
         const projectNames = this.list.map((project) => {
             return project.name;
