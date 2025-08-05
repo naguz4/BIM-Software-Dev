@@ -57,6 +57,11 @@ button {
     row-gap: 15px;
    
 }
+
+#nav-buttons a{
+    text-decoration: none;
+    color: white;
+}
 #nav-buttons li:hover {
     background-color: var(--primary);
     color: brown;
@@ -81,6 +86,11 @@ header {
 #content {
     
 }
+#projects-list a{
+    color: white;
+    text-decoration: none;
+}
+
 
 .project-card{
     background-color: var(--background-100);

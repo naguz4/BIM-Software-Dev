@@ -1,9 +1,62 @@
-import * as React from 'react';///
+import * as React from 'react';
+import * as Router from "react-router-dom";
 import { IProject, UserRole, ProjecStatus, Project } from '../src/class/Project';
 import { ProjectsManager } from '../src/class/ProjectManager'
+import { ProjectCard } from './ProjectCard';
+import { Searchbox } from './Searchbox';
+import { Alert, AlertTitle } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import * as Firestore from "firebase/firestore";
+import { firestoreDB } from '../src/firebase';
+import { getCollection } from '../src/firebase';
 
-export function ProjectPage() {
-    const projectsManager = new ProjectsManager();
+
+interface Props {
+  projectsManager: ProjectsManager;
+}
+
+const projectsCollection = getCollection<IProject>("/projects");
+
+export function ProjectPage(props: Props) {
+    
+    
+    const [projects, setProjects] = React.useState<Project[]>(props.projectsManager.list);
+    props.projectsManager.OnProjectCreated = () => {setProjects([...props.projectsManager.list])}
+    
+
+    const getFirestoreProjects = async () => {
+            const firebaseProjects = await Firestore.getDocs(projectsCollection)
+            for ( const doc of firebaseProjects.docs) {
+              const data = doc.data()
+              const project: IProject = {
+                ...data,
+                finishDate: (data.finishDate)
+              }
+              try {
+                props.projectsManager.newProject(project, doc.id)
+              } catch (error) {
+                console.error("Error adding project:", error);
+              }
+              
+    }
+  }
+
+    React.useEffect(() => {
+      getFirestoreProjects();
+
+    }, [])
+
+    const projectCards = projects.map((project) => {
+      return (
+      <Router.Link to={`/project/${project.id}`} key={project.id}>
+        <ProjectCard project={project}  />
+      </Router.Link>
+      )
+    })
+
+    React.useEffect(() => {
+      console.log("Project updated", projects)
+    }, [projects])
     const onFormSubmit = (e: React.FormEvent) => {
                 const projectForm = document.getElementById("new-project-form");
                 if (!(projectForm && projectForm instanceof HTMLFormElement)) {return}
@@ -27,8 +80,7 @@ export function ProjectPage() {
                 }
         
                 const formData = new FormData(projectForm);
-                const finishDateValue = formData.get("finishDate") as string;
-                const finishDate = finishDateValue ? new Date(finishDateValue) : new Date(); // Set default date to current date if not provided
+                
 
                 const getInitials = (name: string): string => {
                     const parts = name.split(" ");
@@ -46,20 +98,21 @@ export function ProjectPage() {
                     description: formData.get("description") as string,
                     status: formData.get("status") as ProjecStatus,
                     userRole: formData.get("userRole") as UserRole,
-                    finishDate: finishDate,
+                    finishDate: new Date(formData.get("finishDate") as string),
                     firstletters: getInitials(formData.get("name") as string),
                     todos: [], // Initialize todos
                 };
         
                 try {
-                    const project = projectsManager.newProject(projectData);
-                    console.log(project)
+                  Firestore.addDoc(projectsCollection, projectData)
+                    const project = props.projectsManager.newProject(projectData);
                     let currentProject: Project | null = null;
                     currentProject = project; // Set the current project
                     projectForm.reset();
                     const modal = document.getElementById("new-project-modal");
                     if (!(modal && modal instanceof HTMLDialogElement)) {return}
                     modal.close();
+
                 } catch (err) {
                     const errorText = document.getElementById("errorText");
                     if (errorText) {
@@ -77,11 +130,16 @@ export function ProjectPage() {
     
 
     const onFileUploadClick = () => {
-        projectsManager.importFromJSON();
+        props.projectsManager.importFromJSON();
     }
 
     const onFileDownloadClick = () => {
-        projectsManager.exportToJSON();
+        props.projectsManager.exportToJSON();
+    }
+
+    const onProjectSearch = (value: string) => {
+      setProjects(props.projectsManager.filterProject(value))
+
     }
 
     return(        
@@ -126,7 +184,8 @@ export function ProjectPage() {
               </div>
               <div className="form-field-container">
                 <label>
-                  <span className="material-symbols-outlined">location_on</span>Status
+                  <span className="material-symbols-outlined">location_on</span>
+                  Status
                 </label>
                 <select name="status">
                   <option>Pending</option>
@@ -153,6 +212,7 @@ export function ProjectPage() {
         </dialog>
         <header>
           <h2>Projects</h2>
+          <Searchbox onChange={(value) => onProjectSearch(value)}/>
           <div>
             <button
               id="import-project-btn"
@@ -171,91 +231,14 @@ export function ProjectPage() {
             <button onClick={onNewProjectClick} id="new-project-btn">New Project</button>
           </div>
         </header>
-        <div id="projects-list">
-          <div className="project-card">
-            <div className="card-header">
-              <p
-                style={{
-                  backgroundColor: "orange",
-                  padding: 10,
-                  borderRadius: 8,
-                  aspectRatio: 1,
-                  textTransform: "uppercase"
-                }}
-              >
-                HC
-              </p>
-              <div>
-                <h5>Project Name</h5>
-                <p>Project Description</p>
-              </div>
+        {
+          projects.length > 0 ? <div id="projects-list">{ projectCards }</div> : <div>
+            <Alert severity="info" style={{ margin: "20px" }}>
+              <AlertTitle>No projects found</AlertTitle>
+            </Alert>
             </div>
-            <div className="card-content">
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Role</p>
-                <p>Enginner</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Cost</p>
-                <p>$200000</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Estimated Progress</p>
-                <p>45%</p>
-              </div>
-            </div>
-          </div>
-          <div className="project-card">
-            <div className="card-header">
-              <p
-                className="initials"
-                style={{
-                  backgroundColor: "orange",
-                  padding: 10,
-                  borderRadius: 8,
-                  aspectRatio: 1,
-                  textTransform: "uppercase"
-                }}
-              >
-                HC
-              </p>
-              <div>
-                <h5>Project Name</h5>
-                <p>Project Description</p>
-              </div>
-            </div>
-            <div className="card-content">
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Status</p>
-                <p>Active</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Role</p>
-                <p>Enginner</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Cost</p>
-                <p>$200000</p>
-              </div>
-              <div className="card-property">
-                <p style={{ color: "beige" }}>Estimated Progress</p>
-                <p>45%</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        }
+        
       </div>
       )
 }
