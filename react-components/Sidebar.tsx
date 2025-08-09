@@ -13,8 +13,8 @@ export function Sidebar () {
             <span className="material-symbols-outlined">home</span>Projects
             </li>
             </Router.Link>
-            <Router.Link to="/project">
-            <li>Users</li>
+            <Router.Link to="/users">
+            <li><span className='material-symbols-outlined'>people</span>Users</li>
             </Router.Link>
             
             
