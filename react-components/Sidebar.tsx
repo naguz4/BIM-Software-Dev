@@ -9,12 +9,12 @@ export function Sidebar () {
         <img src="./assets/company-logo.svg" alt="Construction Company Logo" />
         <ul id="nav-buttons">
             <Router.Link to="/">
-            <li id="ProjectsBtn" onClick={() => navigate("/")}>
-            <span className="material-symbols-outlined">home</span>Projects
+            <li  id="ProjectsBtn" onClick={() => navigate("/")}>
+            <bim-label style={{color: '#fff'}} icon="material-symbols:apartment"></bim-label>Projects
             </li>
             </Router.Link>
             <Router.Link to="/users">
-            <li><span className='material-symbols-outlined'>people</span>Users</li>
+            <li ><bim-label style={{color: '#fff'}} icon="mdi:user"></bim-label>Users</li>
             </Router.Link>
             
             

@@ -7,13 +7,12 @@ interface Props {
 export function TodoSearchbox(props: Props) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', columnGap: 10, width: "100%" }}>
-            <input 
+            <bim-text-input 
             onChange={(e) => {props.onChange(e.target.value)}}
             type="text"
             placeholder='Search todo...' 
-            style={{ width: "100%", height: "40px", backgroundColor: "var(--background-200)"}}
-            />
-
+            style={{ width: "100%", backgroundColor: "var(--background-200)"}}
+            ></bim-text-input>
         </div>
     )
 }

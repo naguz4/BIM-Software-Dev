@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles';
 import * as Firestore from "firebase/firestore";
 import { firestoreDB } from '../src/firebase';
 import { getCollection } from '../src/firebase';
+import * as BUI from '@thatopen/ui';
 
 
 interface Props {
@@ -142,7 +143,54 @@ export function ProjectPage(props: Props) {
 
     }
 
-    return(        
+    const importBtn = BUI.Component.create<BUI.Button>(() => {
+      return BUI.html`
+      <bim-button
+        id="import-project-btn"
+        icon="iconoir:import"
+        @click=${onFileUploadClick}
+      >
+      </bim-button>
+      `
+    })
+
+    const exportBtn = BUI.Component.create<BUI.Button>(() => {
+      return BUI.html`
+      <bim-button
+        id="export-project-btn"
+        icon="ph:export"
+        @click=${onFileDownloadClick}
+      >
+      </bim-button>
+      `
+    })
+    const newProjectBtn = BUI.Component.create<BUI.Button>(() => {
+      return BUI.html`
+      <bim-button
+      label="New Project" 
+      icon="fluent:add-20-regular" 
+      id="new-project-btn"
+      @click=${onNewProjectClick}
+      >
+      </bim-button>
+      `
+    })
+
+    React.useEffect(() => {
+      const projectControls = document.getElementById("project-page-controls");
+      projectControls?.appendChild(importBtn);
+      projectControls?.appendChild(exportBtn);
+      projectControls?.appendChild(newProjectBtn);
+
+      const cancelBtn = document.getElementById("cancel-btn");
+      cancelBtn?.addEventListener("click", () => {
+      const modal = document.getElementById("new-project-modal");
+      if (!(modal && modal instanceof HTMLDialogElement)) {return}
+      modal.close();
+    })
+    }, [])
+
+    return(
         <div className="page" id="projects-page" style={{ display: "flex" }}>
         <dialog id="new-project-modal">
           <form id="new-project-form" onSubmit={(e) =>{onFormSubmit(e)}}>
@@ -150,7 +198,7 @@ export function ProjectPage(props: Props) {
             <div className="input-list">
               <div className="form-field-container">
                 <label>
-                  <span className="material-symbols-outlined">apartment</span>Name
+                  <bim-label label="Name" icon="material-symbols:apartment">Name</bim-label>
                 </label>
                 <input name="name" type="text" id="project-name" />
                 <div className="hint">Hint: use capitals</div>
@@ -159,10 +207,10 @@ export function ProjectPage(props: Props) {
                 </div>
               </div>
               <div className="form-field-container">
-                <label>
+                <bim-label>
                   <span className="material-symbols-outlined">description</span>
                   Description
-                </label>
+                </bim-label>
                 <textarea
                   name="description"
                   cols={30}
@@ -172,63 +220,48 @@ export function ProjectPage(props: Props) {
                 />
               </div>
               <div className="form-field-container">
-                <label>
+                <bim-label>
                   <span className="material-symbols-outlined">account_circle</span>
                   Role
-                </label>
-                <select name="userRole">
-                  <option>Architect</option>
-                  <option>Eng</option>
-                  <option>Developer</option>
-                </select>
+                </bim-label>
+                <bim-dropdown name="userRole">
+                  <bim-option label="Architect" checked></bim-option>
+                  <bim-option label="Eng"></bim-option>
+                  <bim-option label="Developer"></bim-option>
+                </bim-dropdown>
               </div>
               <div className="form-field-container">
-                <label>
+                <bim-label>
                   <span className="material-symbols-outlined">location_on</span>
                   Status
-                </label>
-                <select name="status">
-                  <option>Pending</option>
-                  <option>Active</option>
-                  <option>Finished</option>
-                </select>
+                </bim-label>
+                <bim-dropdown name="status">
+                  <bim-option label="Pending"></bim-option>
+                  <bim-option label="Active"></bim-option>
+                  <bim-option label="Finished"></bim-option>
+                </bim-dropdown>
               </div>
               <div className="form-field-container">
-                <label>
-                  <span className="material-symbols-outlined">calendar_month</span>
+                <bim-label icon="material-symbols:date-range" style={{ marginBottom: 5 }}>
                   Finish Date
-                </label>
-                <input name="finishDate" type="date" />
-                <input />
+                </bim-label>
+                <bim-text-input name="finishDate" type="date" ></bim-text-input>
               </div>
             </div>
             <div>
-              <button id="CancelButton" type="button">
-                Cancel
-              </button>
-              <button type="submit">Accept</button>
+              <bim-button id="cancel-btn" label="Cancel" type="button">
+              </bim-button>
+              <bim-button type="submit" label="Accept">
+              </bim-button>
             </div>
           </form>
         </dialog>
         <header>
-          <h2>Projects</h2>
+          <bim-label>Projects</bim-label>
           <Searchbox onChange={(value) => onProjectSearch(value)}/>
-          <div>
-            <button
-              id="import-project-btn"
-              className="material-icons-round action-icon"
-              onClick={onFileUploadClick}
-            >
-              File Upload
-            </button>
-            <button
-              id="export-project-btn"
-              className="material-icons-round action-icon"
-              onClick={onFileDownloadClick}
-            >
-              File Download
-            </button>
-            <button onClick={onNewProjectClick} id="new-project-btn">New Project</button>
+          <div style={{display: "flex", alignItems: "center", columnGap: 10}}
+          id="project-page-controls">
+
           </div>
         </header>
         {

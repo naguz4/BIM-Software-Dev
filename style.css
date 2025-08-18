@@ -27,7 +27,7 @@
     grid-template-columns: 300px 1fr;
     grid-template-areas: 'sidebar content';
     height: 100vh;
-    background-color: var(--background);
+    background-color: var(--bim-ui_bg-contrast-30);
     color: aliceblue;
     
 }

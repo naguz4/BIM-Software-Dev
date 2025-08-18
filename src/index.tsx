@@ -9,6 +9,23 @@ import { ProjectDetailPage } from "../react-components/ProjectDetailPage";
 import { ProjectsManager } from "../src/class/ProjectManager";
 import { ProjectTodo } from "../react-components/ProjectTodo";
 import { UsersPage } from "../react-components/UsersPage";
+import * as BUI from "@thatopen/ui";
+
+BUI.Manager.init()
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            "bim-grid": any;
+            "bim-label":any;
+            "bim-button": any;
+            "bim-text-input": any;
+            "bim-table": any;
+            "bim-dropdown": any;
+            "bim-option": any;
+        }
+    }
+}
 
 const projectsManager = new ProjectsManager()
 

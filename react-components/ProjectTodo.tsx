@@ -3,6 +3,7 @@ import { ProjectsManager } from "../src/class/ProjectManager";
 import { TodoItem } from "./TodoItem";
 import { updateDocument } from '../src/firebase';
 import { TodoSearchbox } from "./TodoSearchbox";
+import * as BUI from "@thatopen/ui";
 
 interface Todo {
     description: string;
@@ -118,32 +119,40 @@ export function ProjectTodo(props: Props) {
         }
     };
 
+    const onTableCreated = (element?: Element) => {
+        if (!element) return;
+        const todoTable = element as BUI.Table;
+
+        todoTable.data = [
+            {
+                data: {
+                    Task: "Do rebar for column",
+                    Date: "Fri 20 Sept"
+                }
+            }
+        ]
+    }
+
     return (
         <div>
-            <h4>To-Do</h4>
+            <bim-label style={{color: "#fff", fontSize: "var(--font-xl)"}}>To-Do</bim-label>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: 20 }}>
                 <span className="material-symbols-outlined">search</span>
                 <TodoSearchbox onChange={handleTodoSearch} />
-                <button
+                <bim-button
                     onClick={() => {
                         const modal = document.getElementById("new-todo-modal");
                         if (modal && modal instanceof HTMLDialogElement) {
                             modal.showModal();
                         }
                     }}
-                    className="material-symbols-outlined add"
+                    icon="ph:plus"
                 >
-                    add
-                </button>
+                </bim-button>
             </div>
 
-            <div style={{ display: "flex", margin: 20, flexDirection: "column", rowGap: 10 }}>
-                {(todos ?? []).map((todo, index) => (
-                    <div key={index} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <TodoItem todo={todo} />
-                        <button onClick={() => openEditModal(index)} style={{ marginLeft: 8 }}>Edit</button>
-                    </div>
-                ))}
+            <div>
+                <bim-table id="todo-table" ref={onTableCreated}></bim-table>
             </div>
 
             {/* Add ToDo Modal */}

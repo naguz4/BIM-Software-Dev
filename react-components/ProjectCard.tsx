@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Project } from '../src/class/Project';
 import { useNavigate } from 'react-router-dom';
+import { color } from 'three/examples/jsm/nodes/Nodes.js';
 
 interface Props {
     project: Project;
@@ -19,26 +20,31 @@ export function ProjectCard(props: Props) {
             <div className="card-header">
                 <p className="initials color-1">HC</p>
                 <div>
-                    <h5>{props.project.name}</h5>
-                    <p>{props.project.description}</p>
+                    <bim-label
+                    style={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: '#fff'
+                    }}>{props.project.name}</bim-label>
+                    <bim-label style={{color: '#fff'}}>{props.project.description}</bim-label>
                 </div>
             </div>
             <div className="card-content">
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Status</p>
-                    <p>{props.project.status}</p>
+                    <bim-label>Status</bim-label>
+                    <bim-label style={{color: '#fff'}}>{props.project.status}</bim-label>
                 </div>
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Role</p>
-                    <p>{props.project.userRole}</p>
+                    <bim-label>Role</bim-label>
+                    <bim-label style={{color: '#fff'}}>{props.project.userRole}</bim-label>
                 </div>
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Cost</p>
-                    <p>{props.project.cost}</p>
+                    <bim-label>Cost</bim-label>
+                    <bim-label style={{color: '#fff'}}>{props.project.cost}</bim-label>
                 </div>
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Estimated Progress</p>
-                    <p>{props.project.progress * 100}%</p>
+                    <bim-label>Estimated Progress</bim-label>
+                    <bim-label style={{color: '#fff'}}>{props.project.progress * 100}%</bim-label>
                 </div>
             </div>
         </div>
