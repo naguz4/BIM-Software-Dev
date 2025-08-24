@@ -4,6 +4,8 @@ import * as THREE from 'three'
 
 
 export function ThreeViewer() {
+
+    const setViewer = () => {
     const viewer = new OBC.Components();
     const worlds = viewer.get(OBC.Worlds);
 
@@ -18,7 +20,7 @@ export function ThreeViewer() {
     world.scene.setup()
     world.scene.three.background = null
 
-    const viewerContainer = document.getElementById("viewer-container");
+    const viewerContainer = document.getElementById("viewer-container") as HTMLDivElement;
     const rendererComponent = new OBC.SimpleRenderer(viewer, viewerContainer);
     world.renderer = rendererComponent;
 
@@ -34,8 +36,13 @@ export function ThreeViewer() {
 
     world.scene.three.add(cube);
 
-    React.useEffect(() => {
-        setViewer();
+    world.camera.controls.setLookAt(3, 3, 3, 0, 0, 0);
+
+    world.camera.updateAspect()
+}
+
+React.useEffect(() => {
+    setViewer();
 
 return () => {
 

@@ -9,6 +9,13 @@ import { ThreeViewer } from './ThreeViewer';
 import { deleteDocument } from '../src/firebase';
 import { updateDocument } from '../src/firebase';
 import { Timestamp } from 'firebase/firestore';
+import * as BUI from "@thatopen/ui";
+
+
+
+
+
+
 
 
 

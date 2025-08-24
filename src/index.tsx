@@ -11,6 +11,7 @@ import { ProjectTodo } from "../react-components/ProjectTodo";
 import { UsersPage } from "../react-components/UsersPage";
 import * as BUI from "@thatopen/ui";
 
+
 BUI.Manager.init()
 
 declare global {
