@@ -5,17 +5,11 @@ import * as Router from "react-router-dom";
 import { ProjectTodo } from './ProjectTodo';
 import { color, div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
-import { ThreeViewer } from './ThreeViewer';
+import { IFCViewer } from './IFCViewer';
 import { deleteDocument } from '../src/firebase';
 import { updateDocument } from '../src/firebase';
 import { Timestamp } from 'firebase/firestore';
 import * as BUI from "@thatopen/ui";
-
-
-
-
-
-
 
 
 
@@ -205,7 +199,7 @@ export function ProjectDetailPage(props: Props)  {
       </div>
 
     </div>
-    <ThreeViewer/>
+    <IFCViewer/>
   </div>
               {/* Edit Modal */}
             {isEditOpen && (

@@ -1,0 +1,224 @@
+import * as React from 'react';
+import * as OBC from '@thatopen/components';
+import * as THREE from 'three'
+import * as BUI from "@thatopen/ui";
+import * as CUI from "@thatopen/ui-obc"
+import * as OBCF from "@thatopen/components-front"
+import * as FRAGS from '@thatopen/fragments'
+import * as OBF from "@thatopen/components-front"
+import { FragmentsGroup } from '@thatopen/fragments';
+
+
+
+
+export function IFCViewer() {
+    const components = new OBC.Components();
+
+    let fragmentModel: FragmentsGroup | undefined;
+
+    const setViewer = () => {
+    
+    const worlds = components.get(OBC.Worlds);
+
+    const world = worlds.create<
+    OBC.SimpleScene,
+    OBC.OrthoPerspectiveCamera,
+    OBCF.PostproductionRenderer
+    >()
+
+    const sceneComponents = new OBC.SimpleScene(components)
+    world.scene = sceneComponents
+    world.scene.setup()
+
+    const viewerContainer = document.getElementById("viewer-container") as HTMLDivElement;
+    const rendererComponent = new OBCF.PostproductionRenderer(components, viewerContainer);
+    world.renderer = rendererComponent;
+
+    const cameraComponent = new OBC.OrthoPerspectiveCamera(components)
+
+    world.camera = cameraComponent;
+
+    components.init()
+
+
+    world.camera.controls.setLookAt(3, 3, 3, 0, 0, 0);
+
+    world.camera.updateAspect()
+
+    const ifcLoader = components.get(OBC.IfcLoader);
+    ifcLoader.setup()
+
+    const fragmentsManager = components.get(OBC.FragmentsManager);
+    fragmentsManager.onFragmentsLoaded.add(async (model) => {
+        world.scene.three.add(model)
+
+        const indexer = components.get(OBC.IfcRelationsIndexer)
+        await indexer.process(model)
+
+        fragmentModel = model
+        
+    })
+
+    const highlighter = components.get(OBCF.Highlighter)
+    highlighter.setup( {world} )
+    highlighter.zoomToSelection = true
+
+    viewerContainer.addEventListener("resize", () => {
+        rendererComponent.resize()
+        cameraComponent.updateAspect()
+    })
+
+    
+        
+    }
+
+    const onToggleVisibility = () => {
+        const highlighter = components.get(OBCF.Highlighter)
+        const fragments = components.get(OBC.FragmentsManager)
+        const selection = highlighter.selection.select
+        if (Object.keys(selection).length === 0)  return
+        for (const fragmentID in selection) {
+            const fragment = fragments.list.get(fragmentID)
+            const expressIDs = selection[fragmentID]
+            for (const id of expressIDs) {
+                if (!fragment) continue
+                const isHidden = fragment.hiddenItems.has(id)
+                if (isHidden) {
+                    fragment.setVisibility(true, [id])
+                    } else {
+                        fragment.setVisibility(false, [id])
+
+                    }
+                    
+                }
+            }
+        }
+
+const onIsolate = () => {
+    const highlighter = components.get(OBCF.Highlighter)
+    const hider = components.get(OBC.Hider)
+    const selection = highlighter.selection.select
+    hider.isolate(selection)
+
+}
+
+const onShow = () => {
+    const hider = components.get(OBC.Hider)
+    hider.set(true)
+}
+
+const onShowproperties = () => {
+    if (!fragmentModel) return;
+    const highlighter = components.get(OBCF.Highlighter)
+        const selection = highlighter.selection.select
+        const indexer = components.get(OBC.IfcRelationsIndexer)
+        const fragments = components.get(OBC.FragmentsManager)
+        for (const fragmentID in selection) {
+            const fragment = fragments.list.get(fragmentID)
+            const model = fragment?.group
+            const expressIDs = selection[fragmentID]
+            if (!model) continue
+            for (const id of expressIDs) {
+                    const psets = indexer.getEntityRelations(fragmentModel, id, "IsDefinedBy")
+                    console.log(psets)
+                }
+            }
+}
+const setupUI = () => {
+const viewerContainer = document.getElementById("viewer-container") as HTMLDivElement;
+if (!viewerContainer) return
+
+
+const floatingGrid = BUI.Component.create<BUI.Grid> (() => {
+    return BUI.html `
+    <bim-grid
+    floating
+    style="padding:20px"
+    ></bim-grid>
+    `;
+})
+
+const toolbar = BUI.Component.create<BUI.Toolbar> (() => {
+    const [loadIfcbtn] = CUI.buttons.loadIfc({ components: components})
+    return BUI.html `
+    <bim-toolbar style="justify-self: center;">
+    <bim-toolbar-section label="Import">
+    ${loadIfcbtn}
+    </bim-toolbar-section>
+    <bim-toolbar-section label="Selection"></bim-toolbar-section>
+    <bim-button
+    label="Visibility"
+    icon="material-symbols:visibility"
+    @click=${onToggleVisibility}
+    ></bim-button>
+    <bim-button
+    label="Isolate"
+    icon="mdi:filter"
+    @click=${onIsolate}
+    ></bim-button>
+    <bim-button
+    label="Show All"
+    icon="tabler:eye-filled"
+    @click=${onShow}
+    ></bim-button>
+    <bim-button
+    label="Show"
+    icon="clarity:list-line"
+    @click=${onShowproperties}
+    ></bim-button>
+    </bim-toolbar-section>
+    </bim-toolbar>`
+})
+
+floatingGrid.layouts = {
+    main: {
+        template: `
+        "empty" 1fr
+        "toolbar" auto
+        /1fr
+        `,
+        elements: {
+            toolbar
+        }
+    }
+}
+floatingGrid.layout = "main"
+
+viewerContainer.appendChild(floatingGrid);
+}
+
+
+React.useEffect(() => {
+    setViewer();
+    setupUI();
+
+return () => {
+    if (components) {
+    components.dispose();
+    }
+    if (fragmentModel) {
+    fragmentModel.dispose()
+    fragmentModel = undefined;
+}
+
+};
+
+
+}, []);
+
+
+    return (
+        <bim-viewport 
+        id="viewer-container"/>
+
+    )   
+}
+
+
+
+
+
+
+
+
+
