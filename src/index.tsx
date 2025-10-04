@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import * as Router from "react-router-dom";
+import * as Router from "react-router-dom"
 import { Sidebar } from "../react-components/Sidebar";
 import { ProjectPage } from "../react-components/ProjectPage";
 

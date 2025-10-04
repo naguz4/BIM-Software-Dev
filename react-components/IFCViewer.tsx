@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as OBC from '@thatopen/components';
-import * as THREE from 'three'
+import * as THREE from 'three';
 import * as BUI from "@thatopen/ui";
 import * as CUI from "@thatopen/ui-obc"
 import * as OBCF from "@thatopen/components-front"
 import * as FRAGS from '@thatopen/fragments'
 import * as OBF from "@thatopen/components-front"
 import { FragmentsGroup } from '@thatopen/fragments';
+import * as BUIC from "@thatopen/ui-obc"
 
 
 
@@ -39,6 +40,8 @@ export function IFCViewer() {
     world.camera = cameraComponent;
 
     components.init()
+
+    world.renderer.postproduction.enabled = true
 
 
     world.camera.controls.setLookAt(3, 3, 3, 0, 0, 0);
@@ -107,7 +110,7 @@ const onShow = () => {
     hider.set(true)
 }
 
-const onShowproperties = () => {
+const onShowproperties = async () => {
     if (!fragmentModel) return;
     const highlighter = components.get(OBCF.Highlighter)
         const selection = highlighter.selection.select
@@ -119,8 +122,13 @@ const onShowproperties = () => {
             const expressIDs = selection[fragmentID]
             if (!model) continue
             for (const id of expressIDs) {
-                    const psets = indexer.getEntityRelations(fragmentModel, id, "IsDefinedBy")
-                    console.log(psets)
+                    const psets = indexer.getEntityRelations(fragmentModel, id, "ContainedInStructure")
+                    if (psets) {
+                        for (const expressId of psets) {
+                            const props = await fragmentModel.getProperties(expressId)
+                            console.log(props)
+                        }
+                    }
                 }
             }
 }
@@ -138,10 +146,121 @@ const floatingGrid = BUI.Component.create<BUI.Grid> (() => {
     `;
 })
 
+const elementPropertyPanel = BUI.Component.create<BUI.Panel>(() => {
+    const [propsTable, updatePropsTable] = CUI.tables.elementProperties({
+        components,
+        fragmentIdMap: {}
+    })
+    const highlighter = components.get(OBCF.Highlighter)
+    highlighter.events.select.onHighlight.add((fragmentIdMap) => {
+        if (!floatingGrid) return
+        floatingGrid.layout = "second"
+        updatePropsTable({ fragmentIdMap })
+        propsTable.expanded = false
+    })
+
+    highlighter.events.select.onClear.add(() => {
+        updatePropsTable({ fragmentIdMap: {} })
+        if (!floatingGrid) return
+        floatingGrid.layout = "main"
+    })
+
+    const search = (e: Event) => {
+        const input = e.target as BUI.TextInput
+        propsTable.queryString = input.value
+    }
+
+
+
+    return BUI.html `
+    <bim-panel>
+    <bim-panel-section
+    name="property"
+    label="Property Information"
+    fixed
+    >
+    <bim-text-input @input=${search} placeholder="Search" icon="material-symbols:search..."></bim-text-input>
+    ${propsTable}
+    </bim-panel-section>
+    </bim-panel>`
+})
+
+const onWorldsUpdate = () => {
+    if (!floatingGrid) return
+    floatingGrid.layout = "world"
+}
+const worldPanel = BUI.Component.create<BUI.Panel>(() => {
+    const [worldstable] = CUI.tables.worldsConfiguration({ components })
+
+    const search = (e: Event) => {
+        const input = e.target as BUI.TextInput
+        worldstable.queryString = input.value
+    }
+
+    return BUI.html `
+    <bim-panel>
+    <bim-panel-section
+    name="world"
+    label="Worlds"
+    icon="tabler;brush"
+    fixed
+    >
+    <bim-text-input @input=${search} placeholder="Search" icon="material-symbols:search..."></bim-text-input>
+    ${worldstable}
+    </bim-panel-section>
+    </bim-panel>`
+})
+
+const onSpatialupdate = () => {
+    if (!floatingGrid) return
+    floatingGrid.layout = "relations"
+}
+const elementRelationsPanel = BUI.Component.create<BUI.Panel>(() => {
+    const [relationsTree] = CUI.tables.relationsTree({
+        components,
+        models: []
+    })
+
+    relationsTree.preserveStructureOnFilter = true;
+
+    const search = (e: Event) => {
+        const input = e.target as BUI.TextInput
+        relationsTree.queryString = input.value
+    }
+
+    return BUI.html `
+    <bim-panel>
+    <bim-panel-section
+    name="relations"
+    label="Relations"
+    icon="tabler:brush"
+    fixed
+    >
+    <bim-text-input @input=${search} placeholder="Search" icon="material-symbols:search..."></bim-text-input>
+    ${relationsTree}
+    </bim-panel-section>
+    </bim-panel`
+})
+
 const toolbar = BUI.Component.create<BUI.Toolbar> (() => {
     const [loadIfcbtn] = CUI.buttons.loadIfc({ components: components})
     return BUI.html `
+
     <bim-toolbar style="justify-self: center;">
+    <bim-toolbar-section label="App">
+    <bim-button
+    label="World"
+    icon="tabler;brush"
+    @click=${onWorldsUpdate}
+    ></bim-button>
+    </bim-toolbar-section>
+        <bim-toolbar-section label="App">
+    <bim-button
+    label="spatial"
+    icon="tabler;brush"
+    @click=${onSpatialupdate}
+    ></bim-button>
+    </bim-toolbar-section>
     <bim-toolbar-section label="Import">
     ${loadIfcbtn}
     </bim-toolbar-section>
@@ -180,6 +299,39 @@ floatingGrid.layouts = {
         elements: {
             toolbar
         }
+    },
+     second: {
+        template: `
+        "empty elementPropertyPanel" 1fr
+        "toolbar toolbar" auto
+        /1fr 20rem
+        `,
+        elements: {
+            toolbar,
+            elementPropertyPanel
+        },
+    },
+    world: {
+        template: `
+        "empty worldPanel" 1fr
+        "toolbar toolbar" auto
+        /1fr 20rem
+        `,
+        elements: {
+            toolbar,
+            worldPanel
+        },
+    },
+    relations: {
+        template: `
+        "empty elementRelationsPanel" 1fr
+        "toolbar toolbar" auto
+        /1fr 20rem
+        `,
+        elements: {
+            toolbar,
+            elementRelationsPanel
+        },
     }
 }
 floatingGrid.layout = "main"
@@ -209,7 +361,7 @@ return () => {
 
     return (
         <bim-viewport 
-        id="viewer-container"/>
+        id="viewer-container"></bim-viewport>
 
     )   
 }
