@@ -322,3 +322,6 @@ label {
     background-color: #8A33FF; /* Vibrant Purple */
 }
 
+.project-card bim-label {
+    white-space: normal;
+}

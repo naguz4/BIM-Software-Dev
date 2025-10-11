@@ -8,6 +8,18 @@ import { ProjectPage } from "../react-components/ProjectPage";
 import { ProjectDetailPage } from "../react-components/ProjectDetailPage";
 import { ProjectsManager } from "../src/class/ProjectManager";
 import { ProjectTodo } from "../react-components/ProjectTodo";
+import * as BUI from "@thatopen/ui";
+
+BUI.Manager.init()
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            "bim-label": any;
+    }
+}
+}
+
 
 const projectsManager = new ProjectsManager()
 

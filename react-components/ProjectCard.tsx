@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Project } from '../src/class/Project';
 import { useNavigate } from 'react-router-dom';
+import { appIcons } from '../src/globals';
 
 interface Props {
     project: Project;
@@ -19,26 +20,26 @@ export function ProjectCard(props: Props) {
             <div className="card-header">
                 <p className="initials color-1">HC</p>
                 <div>
-                    <h5>{props.project.name}</h5>
-                    <p>{props.project.description}</p>
+                    <bim-label style={{color:"white", fontSize:"1.2rem"}}>{props.project.name}</bim-label>
+                    <bim-label>{props.project.description}</bim-label>
                 </div>
             </div>
             <div className="card-content">
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Status</p>
-                    <p>{props.project.status}</p>
+                    <bim-label icon={appIcons.STATUS} style={{ color: 'beige' }}>Status</bim-label>
+                    <bim-label>{props.project.status}</bim-label>
                 </div>
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Role</p>
-                    <p>{props.project.userRole}</p>
+                    <bim-label style={{ color: 'beige' }}>Role</bim-label>
+                    <bim-label>{props.project.userRole}</bim-label>
                 </div>
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Cost</p>
-                    <p>{props.project.cost}</p>
+                    <bim-label style={{ color: 'beige' }}>Cost</bim-label>
+                    <bim-label>{props.project.cost}</bim-label>
                 </div>
                 <div className="card-property">
-                    <p style={{ color: 'beige' }}>Estimated Progress</p>
-                    <p>{props.project.progress * 100}%</p>
+                    <bim-label style={{ color: 'beige' }}>Estimated Progress</bim-label>
+                    <bim-label>{props.project.progress * 100}%</bim-label>
                 </div>
             </div>
         </div>
