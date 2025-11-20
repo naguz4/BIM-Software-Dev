@@ -9,8 +9,9 @@
     --background: rgb(1, 81, 134);
     --background-100: rgb(32, 34, 32);
     --background-200: rgb(187, 185, 185);
-    --font-xs: 10px;
-    --font-sm: 12px;
+
+    --bim-ui_main-base: var(var(--primary));
+    --bim-ui_accent-base: var(var(--primary))
 
 }
 *{
@@ -18,6 +19,10 @@
     margin: 0;
     margin: 0;
     padding: 0;
+}
+
+html {
+    font-size: 18px;
 }
 
 
@@ -73,19 +78,11 @@ header {
     align-items: center;
     justify-content: space-between;
 }
-#nav-buttons li {
-    list-style-type: none;
-    padding: 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: var(--background-100);
-    border-radius: 10px;
+#nav-buttons bim-button {
+    background-color: transparent;
 }
-
-#content {
     
-}
+
 #projects-list a{
     color: white;
     text-decoration: none;

@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles';
 import * as Firestore from "firebase/firestore";
 import { firestoreDB } from '../src/firebase';
 import { getCollection } from '../src/firebase';
+import { appIcons } from '../src/globals';
 
 
 interface Props {
@@ -211,24 +212,12 @@ export function ProjectPage(props: Props) {
           </form>
         </dialog>
         <header>
-          <h2>Projects</h2>
+          <bim-label style={{fontSize: "1.3rem", color: "white"}}>Projects</bim-label>
           <Searchbox onChange={(value) => onProjectSearch(value)}/>
           <div>
-            <button
-              id="import-project-btn"
-              className="material-icons-round action-icon"
-              onClick={onFileUploadClick}
-            >
-              File Upload
-            </button>
-            <button
-              id="export-project-btn"
-              className="material-icons-round action-icon"
-              onClick={onFileDownloadClick}
-            >
-              File Download
-            </button>
-            <button onClick={onNewProjectClick} id="new-project-btn">New Project</button>
+            <bim-button onclick={onFileUploadClick} icon= {appIcons.UPLOAD} label="Upload"></bim-button>
+            <bim-button onclick={onFileDownloadClick} icon= {appIcons.DOWNLOAD} label="Download"></bim-button>
+            <bim-button onclick={onNewProjectClick} icon= {appIcons.ADD} label="New Project"></bim-button>
           </div>
         </header>
         {

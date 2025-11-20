@@ -9,6 +9,8 @@ import { ThreeViewer } from './ThreeViewer';
 import { deleteDocument } from '../src/firebase';
 import { updateDocument } from '../src/firebase';
 import { Timestamp } from 'firebase/firestore';
+import * as BUI from "@thatopen/ui";
+import * as TEMPLATES from "../src/ui-templates";
 
 
 interface Props {
@@ -96,9 +98,42 @@ export function ProjectDetailPage(props: Props)  {
       await deleteDocument("projects", id)
       navigateTo("/")
     }
+
+    const viewerGrid = React.useRef<BUI.Grid<["Main"]>>(null);
+    React.useEffect(() => {
+      const { current:grid } = viewerGrid;
+      if (!grid) return
+
+      grid.elements = {
+        header: {
+          template: ( ) => BUI.html`<div></div>`,
+          initialState: {}
+        },
+        sidebar: {
+          template: ( ) => BUI.html`<div></div>`,
+          initialState: {}
+        },
+        componentsGrid: {
+          template: TEMPLATES.componentsGridTemplate,
+          initialState: {}
+        }
+      };
+      grid.layouts = {
+        Main: {
+          template: `
+          "header header" auto
+          "sidebar componentsGrid" 1fr
+          /auto 1fr
+          `,
+        }
+      }
+
+      grid.layout = "Main";
+    }, []);
+
     return (
-        <div className="page" id="project-details">
-  <header>
+        <bim-grid ref={viewerGrid} className="viewer-grid">
+  {/*<header>
     <div>
       <h2 data-project-info="name">{project.name}</h2>
       <p data-project-info="Description" style={{ color: "antiquewhite" }}>
@@ -211,8 +246,7 @@ export function ProjectDetailPage(props: Props)  {
 
     </div>
     <ThreeViewer/>
-  </div>
-              {/* Edit Modal */}
+  </div>*/}{/*
             {isEditOpen && (
                 <dialog open>
                     <form onSubmit={handleEditSubmit} style={{ background: "#222", color: "#fff", padding: 20, borderRadius: 10, minWidth: 350 }}>
@@ -251,11 +285,13 @@ export function ProjectDetailPage(props: Props)  {
                         </div>
                     </form>
                 </dialog>
-            )}
+            )} */}
             
-</div>
+            
+</bim-grid>
+      );
 
 
-    );
+};
 
-}
+

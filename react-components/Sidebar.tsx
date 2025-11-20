@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as Router from "react-router-dom"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { appIcons } from '../src/globals';
 
 export function Sidebar () {
     const navigate = useNavigate();
@@ -9,12 +10,11 @@ export function Sidebar () {
         <img src="./assets/company-logo.svg" alt="Construction Company Logo" />
         <ul id="nav-buttons">
             <Router.Link to="/">
-            <li id="ProjectsBtn" onClick={() => navigate("/")}>
-            <span className="material-symbols-outlined">home</span>Projects
-            </li>
+            <bim-button icon={appIcons.PROJECT} label="Projects">
+            </bim-button>
             </Router.Link>
             <Router.Link to="/project">
-            <li>Users</li>
+            <bim-button icon={appIcons.USER} label="Users"></bim-button>
             </Router.Link>
             
             
