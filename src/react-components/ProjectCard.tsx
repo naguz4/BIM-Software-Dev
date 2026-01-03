@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Project } from '../src/class/Project';
+import { Project } from '../class/Project';
 import { useNavigate } from 'react-router-dom';
-import { appIcons } from '../src/globals';
+import { appIcons } from '../globals';
 
 interface Props {
     project: Project;

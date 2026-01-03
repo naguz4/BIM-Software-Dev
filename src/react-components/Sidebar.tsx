@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Router from "react-router-dom"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { appIcons } from '../src/globals';
+import { appIcons } from '../globals';
 
 export function Sidebar () {
     const navigate = useNavigate();

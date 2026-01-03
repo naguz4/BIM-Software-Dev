@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ITodo } from "../src/class/Project";
+import { ITodo } from "../class/Project";
 
 interface Props {
     todo: ITodo;

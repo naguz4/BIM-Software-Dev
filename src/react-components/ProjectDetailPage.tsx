@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { ProjectsManager } from '../src/class/ProjectManager';
-import { IProject, UserRole, ProjecStatus, Project, ITodo } from '../src/class/Project';
+import { ProjectsManager } from '../class/ProjectManager';
+import { IProject, UserRole, ProjecStatus, Project, ITodo } from '../class/Project';
 import * as Router from "react-router-dom";
 import { ProjectTodo } from './ProjectTodo';
 import { div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
 import { ThreeViewer } from './ThreeViewer';
-import { deleteDocument } from '../src/firebase';
-import { updateDocument } from '../src/firebase';
+import { deleteDocument } from '../firebase';
+import { updateDocument } from '../firebase';
 import { Timestamp } from 'firebase/firestore';
 import * as BUI from "@thatopen/ui";
-import * as TEMPLATES from "../src/ui-templates";
+import * as TEMPLATES from "../ui-templates";
+import { setupComponents } from '../bim-components/setup';
 
 
 interface Props {
@@ -99,23 +100,26 @@ export function ProjectDetailPage(props: Props)  {
       navigateTo("/")
     }
 
-    const viewerGrid = React.useRef<BUI.Grid<["Main"]>>(null);
-    React.useEffect(() => {
-      const { current:grid } = viewerGrid;
+    const viewerGrid = React.useRef<BUI.Grid<["Main"]>>(null)
+
+    const setupGrid = async () => {
+            const { current:grid } = viewerGrid;
       if (!grid) return
+
+      const { viewport } = await setupComponents()
 
       grid.elements = {
         header: {
-          template: ( ) => BUI.html`<div></div>`,
+          template: (_) => BUI.html`<div></div>`,
           initialState: {}
         },
         sidebar: {
-          template: ( ) => BUI.html`<div></div>`,
+          template: (_) => BUI.html`<div></div>`,
           initialState: {}
         },
         componentsGrid: {
           template: TEMPLATES.componentsGridTemplate,
-          initialState: {}
+          initialState: { viewport }
         }
       };
       grid.layouts = {
@@ -129,6 +133,11 @@ export function ProjectDetailPage(props: Props)  {
       }
 
       grid.layout = "Main";
+
+    }
+    React.useEffect(() => {
+        setupGrid()
+
     }, []);
 
     return (

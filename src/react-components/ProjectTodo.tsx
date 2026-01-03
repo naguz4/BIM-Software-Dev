@@ -1,7 +1,7 @@
 import * as React from "react";
-import { ProjectsManager } from "../src/class/ProjectManager";
+import { ProjectsManager } from "../class/ProjectManager";
 import { TodoItem } from "./TodoItem";
-import { updateDocument } from '../src/firebase';
+import { updateDocument } from '../firebase';
 import { TodoSearchbox } from "./TodoSearchbox";
 
 interface Todo {

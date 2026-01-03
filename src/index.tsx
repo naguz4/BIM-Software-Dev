@@ -2,12 +2,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import * as Router from "react-router-dom";
-import { Sidebar } from "../react-components/Sidebar";
-import { ProjectPage } from "../react-components/ProjectPage";
+import { Sidebar } from "../src/react-components/Sidebar";
+import { ProjectPage } from "../src/react-components/ProjectPage";
 
-import { ProjectDetailPage } from "../react-components/ProjectDetailPage";
+import { ProjectDetailPage } from "../src/react-components/ProjectDetailPage";
 import { ProjectsManager } from "../src/class/ProjectManager";
-import { ProjectTodo } from "../react-components/ProjectTodo";
+import { ProjectTodo } from "../src/react-components/ProjectTodo";
 import * as BUI from "@thatopen/ui";
 
 BUI.Manager.init()

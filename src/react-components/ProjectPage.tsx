@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as Router from "react-router-dom";
-import { IProject, UserRole, ProjecStatus, Project } from '../src/class/Project';
-import { ProjectsManager } from '../src/class/ProjectManager'
+import { IProject, UserRole, ProjecStatus, Project } from '../class/Project';
+import { ProjectsManager } from '../class/ProjectManager'
 import { ProjectCard } from './ProjectCard';
 import { Searchbox } from './Searchbox';
 import { Alert, AlertTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as Firestore from "firebase/firestore";
-import { firestoreDB } from '../src/firebase';
-import { getCollection } from '../src/firebase';
-import { appIcons } from '../src/globals';
+import { firestoreDB } from '../firebase';
+import { getCollection } from '../firebase';
+import { appIcons } from '../globals';
 
 
 interface Props {
