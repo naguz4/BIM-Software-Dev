@@ -1,14 +1,17 @@
 import * as BUI from "@thatopen/ui"
 import { ComponentsGrid } from "./src";
 import { viewportContainerTemplate } from "../../containers";
+import { itemsDataPanelTemplate, modelsPanelTemplate } from "../../sections";
+import * as OBC from '@thatopen/components';
 
 interface ComponentsGridState {
+    components: OBC.Components;
     viewport?: BUI.Viewport
 }
 
 
 export const componentsGridTemplate: BUI.StatefullComponent<ComponentsGridState> = (state) => {
-    const {viewport } = state
+    const {components, viewport } = state
     const onCreated = (e?: Element) => {
         if (!e) return;
         const grid = e as ComponentsGrid;
@@ -18,13 +21,21 @@ export const componentsGridTemplate: BUI.StatefullComponent<ComponentsGridState>
                 template: viewportContainerTemplate,
                 initialState: { viewport},
             },
+            itemsData: {
+                template: itemsDataPanelTemplate,
+                initialState: {components}
+            },
+            models: {
+                template: modelsPanelTemplate,
+                initialState: {components}
+            }
         };
 
         grid.layouts = {
             Models: {
                 template: `
-                "viewport" 1fr
-                /1fr
+                "models viewport itemsData" 1fr
+                /22rem 1fr 22rem
                 `,
             },
         }

@@ -2,6 +2,7 @@ import * as OBC from "@thatopen/components";
 import { createworld, setupFragmentsManager, setupIfcLoader } from "./src";
 import * as BUI from "@thatopen/ui"
 import { loadModelBtnTemplate } from "../../ui-templates";
+import { setupHighlighter } from "./src/highlighter";
 
 export const setupComponents = async () => {
     const components = new OBC.Components();
@@ -9,13 +10,8 @@ export const setupComponents = async () => {
 
     setupIfcLoader(components);
     setupFragmentsManager(components, world);
+    setupHighlighter(components, world);
 
-    const [loadModelsBtn] = BUI.Component.create(loadModelBtnTemplate, { components })
-    loadModelsBtn.style.position = "absolute"
-    loadModelsBtn.style.top = "1rem"
-    loadModelsBtn.style.left = "1rem"
-
-    viewport.append(loadModelsBtn)
 
     components.init()
 

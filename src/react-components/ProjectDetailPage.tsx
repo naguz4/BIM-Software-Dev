@@ -106,7 +106,7 @@ export function ProjectDetailPage(props: Props)  {
             const { current:grid } = viewerGrid;
       if (!grid) return
 
-      const { viewport } = await setupComponents()
+      const { components, viewport } = await setupComponents()
 
       grid.elements = {
         header: {
@@ -119,7 +119,7 @@ export function ProjectDetailPage(props: Props)  {
         },
         componentsGrid: {
           template: TEMPLATES.componentsGridTemplate,
-          initialState: { viewport }
+          initialState: { components, viewport }
         }
       };
       grid.layouts = {
