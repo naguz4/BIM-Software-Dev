@@ -76,11 +76,22 @@ export class ProjectsManager {
         if (nameInUse) {
             throw new Error(`A project with the name "${data.name}" already exists`);
         }
-        if (!data.finishDate) {
-            data.finishDate = new Date("2025-02-17");
-        } else if (data.finishDate instanceof Date) {
-            data.finishDate = data.finishDate;
-        }
+
+        const parseFinishDate = (value: any): Date => {
+            if (!value) {
+                return new Date("2025-02-17");
+            }
+            if (value instanceof Date) {
+                return value;
+            }
+            if (value && typeof value.toDate === "function") {
+                return value.toDate();
+            }
+            return new Date(value);
+        };
+
+        data.finishDate = parseFinishDate(data.finishDate);
+
         // Ensure todos are objects
         const todos = Array.from(data.todos ?? []).map(todo => {
             if (typeof todo === "object" && todo !== null) {

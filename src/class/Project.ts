@@ -3,6 +3,19 @@ import { v4 as uuidv4 } from "uuid";
 export type ProjecStatus = "pending" | "active" | "finished";
 export type UserRole = "architect" | "engineer" | "developer";
 
+const normalizeDate = (value: unknown): Date => {
+    if (value instanceof Date) {
+        return value;
+    }
+    if (value && typeof (value as any).toDate === "function") {
+        return (value as any).toDate();
+    }
+    if (typeof value === "string" || typeof value === "number") {
+        return new Date(value);
+    }
+    return new Date();
+};
+
 export interface IProject {
     name: string;
     description: string;
@@ -36,8 +49,8 @@ export class Project implements IProject {
 
     constructor(data: IProject, id = uuidv4()) {
         for (const key in data) {
-            if (key === 'finishDate' && typeof data[key] === 'string') {
-                this[key] = new Date(data[key]);
+            if (key === 'finishDate') {
+                this[key] = normalizeDate(data[key]);
             } else if (key === 'todos' && Array.isArray(data[key])) {
                 this[key] = Array.from(data[key]); // Ensure todos is a new array instance
             } else {

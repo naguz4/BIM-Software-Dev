@@ -97,12 +97,18 @@ export function ProjectPage(props: Props) {
                     return initials;
                 };
         
+                // Get finish date from form, or use default (30 days from today) if not provided
+                const finishDateValue = formData.get("finishDate") as string;
+                const finishDate = finishDateValue 
+                  ? new Date(finishDateValue)
+                  : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default: 30 days from today
+
                 const projectData: IProject = {
                     name: formData.get("name") as string,
                     description: formData.get("description") as string,
                     status: formData.get("status") as ProjecStatus,
                     userRole: formData.get("userRole") as UserRole,
-                    finishDate: new Date(formData.get("finishDate") as string),
+                    finishDate: finishDate,
                     firstletters: getInitials(formData.get("name") as string),
                     todos: [], // Initialize todos
                 };

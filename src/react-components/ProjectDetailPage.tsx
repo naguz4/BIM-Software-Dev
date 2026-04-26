@@ -24,16 +24,28 @@ export function ProjectDetailPage(props: Props)  {
   const [project, setProject] = React.useState<Project | null>(props.projectsManager.getProject(projectid as string) || null);
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [editData, setEditData] = React.useState({
-        name: project?.name || "",
-        description: project?.description || "",
-        userRole: project?.userRole || "architect",
-        status: project?.status || "active",
-        finishDate: project?.finishDate ? new Date(project.finishDate) : new Date(), // <-- Date object
+        name: "",
+        description: "",
+        userRole: "architect" as UserRole,
+        status: "active" as ProjecStatus,
+        finishDate: new Date(),
   });
 
   React.useEffect(() => {
       setProject(props.projectsManager.getProject(projectid as string) || null);
   }, [props.projectsManager, projectid]);
+
+  React.useEffect(() => {
+    if (project) {
+      setEditData({
+        name: project.name,
+        description: project.description,
+        userRole: project.userRole,
+        status: project.status,
+        finishDate: new Date(project.finishDate),
+      });
+    }
+  }, [project]);
   
   if (!projectid) {
     return alert("id not found");
