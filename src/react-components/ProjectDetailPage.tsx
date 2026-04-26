@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { ProjectsManager } from '../class/ProjectManager';
+import { ProjectsManager } from '../class/ProjectManager'
 import { IProject, UserRole, ProjecStatus, Project, ITodo } from '../class/Project';
 import * as Router from "react-router-dom";
 import { ProjectTodo } from './ProjectTodo';
 import { div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
 import { ThreeViewer } from './ThreeViewer';
+import { deleteDocument } from '../firebase';
+import { updateDocument } from '../firebase';
+import { Timestamp } from 'firebase/firestore';
 
 
 interface Props {
@@ -93,50 +96,9 @@ export function ProjectDetailPage(props: Props)  {
       await deleteDocument("projects", id)
       navigateTo("/")
     }
-
-    const viewerGrid = React.useRef<BUI.Grid<["Main"]>>(null)
-
-    const setupGrid = async () => {
-            const { current:grid } = viewerGrid;
-      if (!grid) return
-
-      const { components, viewport } = await setupComponents()
-
-      grid.elements = {
-        header: {
-          template: (_) => BUI.html`<div></div>`,
-          initialState: {}
-        },
-        sidebar: {
-          template: (_) => BUI.html`<div></div>`,
-          initialState: {}
-        },
-        componentsGrid: {
-          template: TEMPLATES.componentsGridTemplate,
-          initialState: { components, viewport }
-        }
-      };
-      grid.layouts = {
-        Main: {
-          template: `
-          "header header" auto
-          "sidebar componentsGrid" 1fr
-          /auto 1fr
-          `,
-        }
-      }
-
-      grid.layout = "Main";
-
-    }
-    React.useEffect(() => {
-        setupGrid()
-
-    }, []);
-
     return (
-        <bim-grid ref={viewerGrid} className="viewer-grid">
-  {/*<header>
+        <div className="page" id="project-details">
+  <header>
     <div>
       <h2 data-project-info="name">{project.name}</h2>
       <p data-project-info="Description" style={{ color: "antiquewhite" }}>
@@ -291,8 +253,11 @@ export function ProjectDetailPage(props: Props)  {
                 </dialog>
             )}
             
-        </bim-grid>
+</div>
+
+
     );
-};
+
+}
 
 
