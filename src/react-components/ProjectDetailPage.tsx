@@ -6,15 +6,6 @@ import { ProjectTodo } from './ProjectTodo';
 import { div } from 'three/examples/jsm/nodes/Nodes.js';
 //import { TodoItem } from './TodoItem';
 import { ThreeViewer } from './ThreeViewer';
-<<<<<<< HEAD:src/react-components/ProjectDetailPage.tsx
-import { deleteDocument } from '../firebase';
-import { updateDocument } from '../firebase';
-import { Timestamp } from 'firebase/firestore';
-import * as BUI from "@thatopen/ui";
-import * as TEMPLATES from "../ui-templates";
-import { setupComponents } from '../bim-components/setup';
-=======
->>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component):react-components/ProjectDetailPage.tsx
 
 
 interface Props {
@@ -258,12 +249,8 @@ export function ProjectDetailPage(props: Props)  {
 
     </div>
     <ThreeViewer/>
-<<<<<<< HEAD:src/react-components/ProjectDetailPage.tsx
-  </div>*/}{/*
-=======
   </div>
               {/* Edit Modal */}
->>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component):react-components/ProjectDetailPage.tsx
             {isEditOpen && (
                 <dialog open>
                     <form onSubmit={handleEditSubmit} style={{ background: "#222", color: "#fff", padding: 20, borderRadius: 10, minWidth: 350 }}>
@@ -302,19 +289,10 @@ export function ProjectDetailPage(props: Props)  {
                         </div>
                     </form>
                 </dialog>
-<<<<<<< HEAD:src/react-components/ProjectDetailPage.tsx
-            )} */}
-            
-            
-</bim-grid>
-      );
-=======
             )}
             
-</div>
->>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component):react-components/ProjectDetailPage.tsx
-
-
+        </bim-grid>
+    );
 };
 
 
