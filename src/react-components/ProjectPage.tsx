@@ -30,9 +30,17 @@ export function ProjectPage(props: Props) {
             const firebaseProjects = await Firestore.getDocs(projectsCollection)
             for ( const doc of firebaseProjects.docs) {
               const data = doc.data()
+              // Convert Firestore Timestamp to Date if needed
+              let finishDate = data.finishDate;
+              if (finishDate && typeof finishDate.toDate === 'function') {
+                finishDate = finishDate.toDate();
+              } else if (typeof finishDate === 'string') {
+                finishDate = new Date(finishDate);
+              }
+              
               const project: IProject = {
                 ...data,
-                finishDate: (data.finishDate)
+                finishDate: finishDate
               }
               try {
                 props.projectsManager.newProject(project, doc.id)
@@ -61,7 +69,7 @@ export function ProjectPage(props: Props) {
     React.useEffect(() => {
       console.log("Project updated", projects)
     }, [projects])
-    const onFormSubmit = (e: React.FormEvent) => {
+    const onFormSubmit = async (e: React.FormEvent) => {
                 const projectForm = document.getElementById("new-project-form");
                 if (!(projectForm && projectForm instanceof HTMLFormElement)) {return}
                 e.preventDefault();
@@ -113,9 +121,21 @@ export function ProjectPage(props: Props) {
                     todos: [], // Initialize todos
                 };
         
+                console.log("Form submitted with data:", projectData);
+                
                 try {
-                  Firestore.addDoc(projectsCollection, projectData)
+                  // Prepare data for Firestore - convert Date to Firestore Timestamp
+                  const firestoreData = {
+                    ...projectData,
+                    finishDate: Firestore.Timestamp.fromDate(projectData.finishDate)
+                  };
+                  
+                  // Await the Firestore add operation with the project data
+                  console.log("Adding to Firestore...");
+                  await Firestore.addDoc(projectsCollection, firestoreData);
+                  console.log("Successfully added to Firestore");
                     const project = props.projectsManager.newProject(projectData);
+                    console.log("Created local project:", project);
                     let currentProject: Project | null = null;
                     currentProject = project; // Set the current project
                     projectForm.reset();
@@ -128,6 +148,7 @@ export function ProjectPage(props: Props) {
                     if (errorText) {
                         errorText.textContent = err as string;
                     }
+                    console.error("Error creating project:", err);
                 }
     }
     const onNewProjectClick = () => {
@@ -187,9 +208,9 @@ export function ProjectPage(props: Props) {
                   Role
                 </label>
                 <select name="userRole">
-                  <option>Architect</option>
-                  <option>Eng</option>
-                  <option>Developer</option>
+                  <option value="architect">Architect</option>
+                  <option value="engineer">Engineer</option>
+                  <option value="developer">Developer</option>
                 </select>
               </div>
               <div className="form-field-container">
@@ -198,9 +219,9 @@ export function ProjectPage(props: Props) {
                   Status
                 </label>
                 <select name="status">
-                  <option>Pending</option>
-                  <option>Active</option>
-                  <option>Finished</option>
+                  <option value="pending">Pending</option>
+                  <option value="active">Active</option>
+                  <option value="finished">Finished</option>
                 </select>
               </div>
               <div className="form-field-container">
