@@ -59,7 +59,7 @@ export class ProjectsManager {
   
     }
 
-<<<<<<< HEAD
+
     filterTodo(value: string) {
               const filteredTodos = this.list.flatMap((project) => project.todos).filter((todo) => {
         return todo.description.includes(value)
@@ -69,10 +69,8 @@ export class ProjectsManager {
     }
 
 
-    newProject(data: any, id?: string) {
-=======
+
     newProject(data: IProject, id?: string) {
->>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component)
         const projectNames = this.list.map((project) => {
             return project.name;
         });
@@ -85,7 +83,6 @@ export class ProjectsManager {
         } else if (data.finishDate instanceof Date) {
             data.finishDate = data.finishDate;
         }
-<<<<<<< HEAD
         // Ensure todos are objects
         const todos = Array.from(data.todos ?? []).map(todo => {
             if (typeof todo === "object" && todo !== null) {
@@ -99,12 +96,8 @@ export class ProjectsManager {
                 priority: "low"
             };
         });
-        const projectData = { ...data, todos };
-        const project = new Project(projectData, id);
-=======
         const projectData = { ...data, todos: Array.from(data.todos ?? []) }; // Ensure todos is a new array instance
-        const project = new Project(data, id);
->>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component)
+        const project = new Project(projectData, id);
         this.list.push(project);
         this.OnProjectCreated(project)
         return project;

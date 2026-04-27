@@ -1,6 +1,7 @@
 import * as BUI from "@thatopen/ui"
 import * as OBC from "@thatopen/components";
 import { appIcons } from "../../globals";
+import * as THREE from "three";
 
 export interface LoadModelBtnState {
     components: OBC.Components
@@ -46,9 +47,40 @@ export const loadModelBtnTemplate: BUI.StatefullComponent<LoadModelBtnState> = (
         const buffer = await file.arrayBuffer();
 
         const fragments = components.get(OBC.FragmentsManager)
-        fragments.core.load(buffer, {
+        await fragments.core.load(buffer, {
             modelId: file.name.replace(".frag", "")
         })
+
+        // Get the loaded model and fit camera to view it
+        const models = fragments.list
+        const model = models.get(file.name.replace(".frag", ""))
+        if (model) {
+            const worlds = components.get(OBC.Worlds)
+            const world = worlds.list.values().next().value
+            if (world) {
+                // Add model to scene (this doesn't happen automatically with frag files)
+                world.scene.three.add(model.object)
+                
+                model.useCamera(world.camera.three)
+                await fragments.core.update(true)
+                
+                // Fit camera to see the entire model using Three.js
+                const box = new THREE.Box3().setFromObject(model.object)
+                const size = box.getSize(new THREE.Vector3())
+                const center = box.getCenter(new THREE.Vector3())
+                
+                // Fit camera to model bounds
+                const camera = world.camera.three
+                const maxDim = Math.max(size.x, size.y, size.z)
+                const fov = camera.fov * (Math.PI / 180)
+                let cameraZ = Math.abs(maxDim / 2 * Math.tan(fov * 2))
+                cameraZ *= 2.5 // zoom out a bit
+                
+                camera.position.set(center.x, center.y, center.z + cameraZ)
+                camera.lookAt(center)
+                camera.updateProjectionMatrix()
+            }
+        }
         });
         input.click();
      }

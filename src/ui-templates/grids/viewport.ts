@@ -34,6 +34,7 @@ export const viewportGridTemplate: BUI.StatefullComponent<ViewportGridState> = (
         grid.layouts = {
             main: {
                 template: `
+                "empty" 1fr
                 "bottomToolbar" auto
                 /1fr
                 `,  

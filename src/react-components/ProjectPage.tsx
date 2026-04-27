@@ -7,13 +7,10 @@ import { Searchbox } from './Searchbox';
 import { Alert, AlertTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as Firestore from "firebase/firestore";
-<<<<<<< HEAD:src/react-components/ProjectPage.tsx
 import { firestoreDB } from '../firebase';
 import { getCollection } from '../firebase';
 import { appIcons } from '../globals';
-=======
-import { firebaseDB } from '../src/firebase';
->>>>>>> 2e21b10 (feat: integrate Firebase for project management and add 3D viewer component):react-components/ProjectPage.tsx
+import { firebaseDB } from '../firebase';
 
 
 interface Props {
@@ -29,36 +26,35 @@ export function ProjectPage(props: Props) {
     props.projectsManager.OnProjectCreated = () => {setProjects([...props.projectsManager.list])}
     
 
+  React.useEffect(() => {
+    getFirestoreProjects();
+
+  }, [])
+
     const getFirestoreProjects = async () => {
             const firebaseProjects = await Firestore.getDocs(projectsCollection)
             for ( const doc of firebaseProjects.docs) {
               const data = doc.data()
-              const project: IProject = {
-                ...data,
-                finishDate: (data.finishDate)
-              }
-              try {
-                props.projectsManager.newProject(project, doc.id)
-              } catch (error) {
-                console.error("Error adding project:", error);
+              
+              // Handle finishDate conversion - could be Timestamp, Date, string, or null
+              let finishDate: Date;
+              if (data.finishDate && typeof data.finishDate.toDate === 'function') {
+                // It's a Firestore Timestamp
+                finishDate = data.finishDate.toDate();
+              } else if (data.finishDate instanceof Date) {
+                // It's already a Date
+                finishDate = data.finishDate;
+              } else if (typeof data.finishDate === 'string') {
+                // It's a string
+                finishDate = new Date(data.finishDate);
+              } else {
+                // Default to now if null/undefined
+                finishDate = new Date();
               }
               
-    }
-  }
-
-    React.useEffect(() => {
-      getFirestoreProjects();
-
-    }, [])
-
-    const getFirestoreProjects = async () => {
-            const projectsCollection = Firestore.collection(firebaseDB,"/projects" ) as Firestore.CollectionReference<IProject>;
-            const firebaseProjects = await Firestore.getDocs(projectsCollection)
-            for ( const doc of firebaseProjects.docs) {
-              const data = doc.data()
               const project: IProject = {
                 ...data,
-                finishDate: (data.finishDate as unknown as Firestore.Timestamp).toDate()
+                finishDate
               }
               try {
                 props.projectsManager.newProject(project, doc.id)
@@ -85,7 +81,7 @@ export function ProjectPage(props: Props) {
     React.useEffect(() => {
       console.log("Project updated", projects)
     }, [projects])
-    const onFormSubmit = (e: React.FormEvent) => {
+    const onFormSubmit = async (e: React.FormEvent) => {
                 const projectForm = document.getElementById("new-project-form");
                 if (!(projectForm && projectForm instanceof HTMLFormElement)) {return}
                 e.preventDefault();
@@ -132,7 +128,7 @@ export function ProjectPage(props: Props) {
                 };
         
                 try {
-                  Firestore.addDoc(projectsCollection, projectData)
+                  await Firestore.addDoc(projectsCollection, projectData);
                     const project = props.projectsManager.newProject(projectData);
                     let currentProject: Project | null = null;
                     currentProject = project; // Set the current project
@@ -205,9 +201,9 @@ export function ProjectPage(props: Props) {
                   Role
                 </label>
                 <select name="userRole">
-                  <option>Architect</option>
-                  <option>Eng</option>
-                  <option>Developer</option>
+                  <option value="architect">Architect</option>
+                  <option value="engineer">Eng</option>
+                  <option value="developer">Developer</option>
                 </select>
               </div>
               <div className="form-field-container">
@@ -216,9 +212,9 @@ export function ProjectPage(props: Props) {
                   Status
                 </label>
                 <select name="status">
-                  <option>Pending</option>
-                  <option>Active</option>
-                  <option>Finished</option>
+                  <option value="pending">Pending</option>
+                  <option value="active">Active</option>
+                  <option value="finished">Finished</option>
                 </select>
               </div>
               <div className="form-field-container">
@@ -227,11 +223,15 @@ export function ProjectPage(props: Props) {
                   Finish Date
                 </label>
                 <input name="finishDate" type="date" />
-                <input />
               </div>
             </div>
             <div>
-              <button id="CancelButton" type="button">
+              <button id="CancelButton" type="button" onClick={() => {
+                const modal = document.getElementById("new-project-modal");
+                if (modal && modal instanceof HTMLDialogElement) {
+                  modal.close();
+                }
+              }}>
                 Cancel
               </button>
               <button type="submit">Accept</button>
