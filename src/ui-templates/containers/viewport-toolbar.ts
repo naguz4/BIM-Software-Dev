@@ -16,6 +16,12 @@ ViewerToolbarState
     const { components } = state; 
 
     let colorinput: BUI.ColorInput | undefined;
+    const onInputCreated = (e?: Element) => {
+        if (!e) return;
+        colorinput = e as BUI.ColorInput;
+    };
+
+    
 
     const onApplyColor = async ({ target:button }: { target: BUI.Button}) => {
         if (!colorinput) return;
@@ -42,9 +48,18 @@ ViewerToolbarState
         highlighter.clear("select")])
 
         button.loading = false
+        BUI.ContextMenu.removeMenus()
     }
 
-    const onInputCreated = (e?: Element) => {};
+    const onReset = async ({ target }: { target: BUI.Button }) => {
+        target.loading = true;
+        const highlighter = components.get(OBF.Highlighter)
+        await highlighter.clear()
+        BUI.ContextMenu.removeMenus()
+        target.loading = false;
+    }
+
+   
 
     return BUI.html`
     <bim-toolbar>
@@ -55,6 +70,7 @@ ViewerToolbarState
     <bim-color-input ${BUI.ref(onInputCreated)}></bim-color-input> <!-- custom color input from that open engine -->
     <div style="display:flex; gap: 0.5rem">
     <bim-button @click=${onApplyColor} icon=${appIcons.APPLY} label="Apply"></bim-button>
+    <bim-button icon=${appIcons.CLEAR} label="Reset" @click=${onReset}></bim-button>
     </div>
     </bim-context-menu>
     </bim-button>
