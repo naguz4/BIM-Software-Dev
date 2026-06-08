@@ -12,6 +12,7 @@ export const appIcons = {
     HIDE: "material-symbols:hide-source",
     ISOLATE: "material-symbols:visibility-off",
     SHOW: "material-symbols:visibility",
+    TRANSPARENT: "material-symbols:transparency"
     
     
 
